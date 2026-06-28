@@ -31,7 +31,14 @@ export function SiteHeader() {
         <div className="site-header-rule">
           <span className="site-header-rule-side">{site.volume}</span>
           <span className="site-header-date">{today}</span>
-          <span className="site-header-rule-side site-header-meta-accent">Intelligence Engine Active</span>
+          <Link
+            href="/brief"
+            className={`site-header-rule-side site-header-brief-link${
+              pathname === '/brief' || pathname.startsWith('/brief/') ? ' site-header-brief-link-active' : ''
+            }`}
+          >
+            Intelligence Brief
+          </Link>
         </div>
 
         <nav className="site-nav" aria-label="Primary">

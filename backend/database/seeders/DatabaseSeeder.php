@@ -43,5 +43,6 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call(DemoArticlesSeeder::class);
+        $this->call(IntelligenceBriefSeeder::class);
     }
 }

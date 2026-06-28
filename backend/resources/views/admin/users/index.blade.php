@@ -2,13 +2,11 @@
 @section('page_title', 'Staff')
 
 @section('content')
-<div class="page-header">
-    <div>
-        <h1 class="page-title">Editorial Staff</h1>
-        <p class="page-subtitle">Editors and writers</p>
-    </div>
-    <a href="{{ route('admin.users.create') }}" class="btn btn-primary">+ Add Staff</a>
-</div>
+<x-admin.page-header title="Editorial Staff" subtitle="Editors and writers">
+    <x-slot:actions>
+        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">+ Add Staff</a>
+    </x-slot:actions>
+</x-admin.page-header>
 
 <div class="card">
     <table class="data-table">

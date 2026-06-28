@@ -44,7 +44,9 @@ $sections = collect($nav)->groupBy('section');
 
 <aside class="admin-sidebar">
     <div class="admin-sidebar-brand">
-        <h1>Indian Opinions</h1>
+        <a href="{{ config('app.frontend_url') ?: 'http://localhost:9002' }}" target="_blank" rel="noopener" class="admin-sidebar-brand-link">
+            <h1>Indian Opinions</h1>
+        </a>
         <p>Editorial Publishing House</p>
     </div>
 
@@ -69,13 +71,4 @@ $sections = collect($nav)->groupBy('section');
             @endforeach
         @endcan
     </nav>
-
-    <div class="admin-sidebar-footer">
-        <p style="margin: 0 0 8px; color: var(--on-dark-muted);">{{ $user->name }} · {{ $user->roleLabel() }}</p>
-        <p style="margin: 0 0 8px; color: var(--on-dark-muted);">{{ $user->email }}</p>
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="btn btn-ghost btn-sm" style="color: var(--on-dark-muted); padding-left: 0;">Sign out</button>
-        </form>
-    </div>
 </aside>

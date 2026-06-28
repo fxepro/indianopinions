@@ -2,6 +2,7 @@
 @section('page_title', 'Gallery')
 
 @section('content')
+<x-admin.page-header title="Gallery" subtitle="Upload and manage editorial images" />
 
 {{-- ── Drag-and-drop upload zone ──────────────────────────────────────── --}}
 <div class="mb-8"

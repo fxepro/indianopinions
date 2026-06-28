@@ -2,12 +2,7 @@
 @section('page_title', 'Permissions Matrix')
 
 @section('content')
-<div class="page-header">
-    <div>
-        <h1 class="page-title">Permissions Matrix</h1>
-        <p class="page-subtitle">What each role can see and do in the editorial console</p>
-    </div>
-</div>
+<x-admin.page-header title="Permissions Matrix" subtitle="What each role can see and do in the editorial console" />
 
 <div class="card">
     <table class="data-table">

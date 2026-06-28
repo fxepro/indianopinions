@@ -134,6 +134,14 @@
     @apply hidden md:block text-primary font-bold italic;
   }
 
+  .site-header-brief-link {
+    @apply block text-right text-primary font-bold italic hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+  }
+
+  .site-header-brief-link-active {
+    @apply underline;
+  }
+
   .site-logo-link {
     @apply inline-block;
   }
@@ -219,6 +227,74 @@
 
   .quote-panel {
     @apply mt-12 bg-secondary p-6 rounded-lg;
+  }
+
+  .brief-page {
+    @apply pb-16;
+  }
+
+  .brief-header {
+    @apply border-b border-border pb-10 mb-10 text-center;
+  }
+
+  .brief-title {
+    @apply text-4xl md:text-5xl font-bold mb-3 tracking-tight;
+  }
+
+  .brief-edition {
+    @apply font-headline italic text-muted-foreground text-lg mb-6;
+  }
+
+  .brief-intro {
+    @apply text-sm text-muted-foreground leading-relaxed max-w-2xl mx-auto;
+  }
+
+  .brief-edition-nav {
+    @apply mt-8 flex justify-between items-center text-xs font-bold uppercase tracking-widest gap-4;
+  }
+
+  .brief-edition-nav-link {
+    @apply text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+  }
+
+  .brief-section {
+    @apply mb-12;
+  }
+
+  .brief-section-label {
+    @apply section-heading;
+  }
+
+  .brief-leads {
+    @apply space-y-10;
+  }
+
+  .brief-lead-headline {
+    @apply text-2xl md:text-3xl font-bold mb-4 leading-snug;
+  }
+
+  .brief-row {
+    @apply grid grid-cols-1 md:grid-cols-[minmax(0,20%)_minmax(0,80%)] gap-4 md:gap-8 py-6 border-b border-border;
+  }
+
+  .brief-hub-row:last-child {
+    @apply border-b-0;
+  }
+
+  .brief-row-label {
+    @apply text-primary uppercase text-xs font-bold tracking-[0.25em] md:pt-1;
+  }
+
+  .brief-blurb {
+    @apply font-headline text-base md:text-lg leading-relaxed text-foreground/90;
+  }
+
+  .brief-caveat {
+    @apply mt-16 pt-8 border-t border-border text-xs text-muted-foreground leading-relaxed space-y-3;
+  }
+
+  .brief-caveat-brand {
+    @apply uppercase tracking-widest font-bold text-[10px];
   }
 }
 

@@ -2,13 +2,11 @@
 @section('page_title', 'Dashboard')
 
 @section('content')
-<div class="page-header">
-    <div>
-        <h1 class="page-title">Editorial Dashboard</h1>
-        <p class="page-subtitle">{{ auth()->user()->roleLabel() }} workspace</p>
-    </div>
-    <a href="{{ route('admin.posts.create') }}" class="btn btn-primary">+ New Article</a>
-</div>
+<x-admin.page-header title="Editorial Dashboard" :subtitle="auth()->user()->roleLabel().' workspace'">
+    <x-slot:actions>
+        <a href="{{ route('admin.posts.create') }}" class="btn btn-primary">+ New Article</a>
+    </x-slot:actions>
+</x-admin.page-header>
 
 <div class="grid-stats" style="margin-bottom: 24px;">
     @foreach($stats as $stat)

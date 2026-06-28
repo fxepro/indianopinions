@@ -2,6 +2,8 @@
 @section('page_title', 'Tags')
 
 @section('content')
+<x-admin.page-header title="Tags" subtitle="Label articles for filtering and discovery" />
+
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
     {{-- Add tag form --}}

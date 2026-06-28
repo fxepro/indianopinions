@@ -2,12 +2,11 @@
 @section('page_title', isset($user) ? 'Edit Staff' : 'Add Staff')
 
 @section('content')
-<div class="page-header">
-    <div>
-        <h1 class="page-title">{{ isset($user) ? 'Edit Staff Member' : 'Add Staff Member' }}</h1>
-    </div>
-    <a href="{{ route('admin.users.index') }}" class="btn btn-outline">Back</a>
-</div>
+<x-admin.page-header :title="isset($user) ? 'Edit Staff Member' : 'Add Staff Member'">
+    <x-slot:actions>
+        <a href="{{ route('admin.users.index') }}" class="btn btn-outline">Back</a>
+    </x-slot:actions>
+</x-admin.page-header>
 
 <div class="card" style="max-width: 560px;">
     <div class="card-body">

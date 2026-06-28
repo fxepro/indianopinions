@@ -2,18 +2,16 @@
 @section('page_title', 'Articles')
 
 @section('content')
-<div class="page-header">
-    <div>
-        <h1 class="page-title">Articles</h1>
-        <p class="page-subtitle">Manage the editorial pipeline</p>
-    </div>
-    @can('create', App\Models\Post::class)
-        <a href="{{ route('admin.posts.create') }}" class="btn btn-primary">+ New Article</a>
-    @endcan
-</div>
+<x-admin.page-header title="Articles" subtitle="Manage the editorial pipeline">
+    <x-slot:actions>
+        @can('create', App\Models\Post::class)
+            <a href="{{ route('admin.posts.create') }}" class="btn btn-primary">+ New Article</a>
+        @endcan
+    </x-slot:actions>
+</x-admin.page-header>
 
 <div class="card" style="margin-bottom: 16px;">
-    <div class="card-body" style="display: flex; flex-wrap: gap: 8px;">
+    <div class="card-body page-toolbar">
         <a href="{{ route('admin.posts.index') }}" class="badge {{ !$currentStatus ? 'badge-primary' : 'badge-muted' }}">All</a>
         @foreach($statuses as $status)
             <a href="{{ route('admin.posts.index', ['status' => $status->value]) }}"

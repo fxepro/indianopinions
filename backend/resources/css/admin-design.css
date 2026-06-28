@@ -30,14 +30,21 @@
   --shadow-card:    0 1px 2px rgba(10, 46, 64, 0.04), 0 1px 3px rgba(10, 46, 64, 0.06);
 }
 
-.admin-shell {
+/* Admin shell — override public-site body styles from Tailwind base layer */
+body.admin-shell {
   font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
   background: var(--bg);
   color: var(--text);
+}
+
+.admin-shell {
   min-height: 100vh;
 }
 
-.admin-layout { display: flex; min-height: 100vh; }
+.admin-shell .admin-layout { display: flex; min-height: 100vh; }
 
 .admin-sidebar {
   width: 224px;
@@ -66,6 +73,18 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   margin: 0;
+}
+
+.admin-sidebar-brand-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.admin-sidebar-brand-link:hover h1 {
+  color: var(--on-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .admin-sidebar-brand p {
@@ -101,29 +120,105 @@
 .admin-nav-link:hover { background: rgba(255,255,255,0.12); color: var(--on-dark); }
 .admin-nav-link.active { background: var(--navy); color: var(--on-dark); }
 
-.admin-sidebar-footer {
-  padding: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.16);
-  font-size: 13px;
-}
+.admin-shell .admin-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 
-.admin-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-
-.admin-topbar {
-  height: 56px;
+.admin-shell .admin-topbar {
+  flex-shrink: 0;
+  width: 100%;
   background: var(--card);
   border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 30;
 }
 
-.admin-topbar-title { font-size: 14px; font-weight: 700; color: var(--navy); }
-.admin-topbar-meta { display: flex; align-items: center; gap: 16px; font-size: 13px; color: var(--text-muted); }
-.admin-content { flex: 1; padding: 24px; }
+.admin-shell .admin-topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  min-height: 56px;
+  padding: 0 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
 
-.page-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+.admin-shell .admin-topbar-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.admin-shell .admin-topbar-logout { margin: 0; line-height: 0; }
+
+.admin-shell .admin-topbar-logout-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.admin-shell .admin-topbar-logout-btn:hover {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.admin-shell .admin-content { flex: 1; padding: 24px; width: 100%; box-sizing: border-box; }
+
+.admin-shell .page-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "main actions";
+  align-items: start;
+  column-gap: 24px;
+  row-gap: 12px;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.admin-shell .page-header-main { grid-area: main; min-width: 0; }
+.admin-shell .page-header-meta { margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+
+.admin-shell .page-header-actions {
+  grid-area: actions;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  align-self: start;
+}
+
+.admin-shell .page-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 640px) {
+  .admin-shell .page-header {
+    grid-template-columns: 1fr;
+    grid-template-areas: "main" "actions";
+  }
+
+  .admin-shell .page-header-actions {
+    justify-content: flex-start;
+  }
+
+  .admin-shell .admin-topbar-inner {
+    padding: 8px 16px;
+    min-height: auto;
+  }
+}
 .page-title { font-size: 1.5rem; font-weight: 700; margin: 0; }
 .page-subtitle { font-size: 0.875rem; color: var(--text-muted); margin: 4px 0 0; }
 

@@ -2,12 +2,7 @@
 @section('page_title', 'Homepage Layout')
 
 @section('content')
-<div class="page-header">
-    <div>
-        <h1 class="page-title">Homepage Orchestration</h1>
-        <p class="page-subtitle">Choose what appears in each slot. Empty slots show the latest published articles.</p>
-    </div>
-</div>
+<x-admin.page-header title="Homepage Orchestration" subtitle="Choose what appears in each slot. Empty slots show the latest published articles." />
 
 @include('admin.layout._form', [
     'action' => route('admin.layout.homepage.update'),

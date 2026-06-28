@@ -2,6 +2,12 @@
 @section('page_title', isset($gallery) ? 'Edit Image' : 'Add Image')
 
 @section('content')
+<x-admin.page-header :title="isset($gallery) ? 'Edit Image' : 'Add Image'">
+    <x-slot:actions>
+        <a href="{{ route('admin.gallery.index') }}" class="btn btn-outline">Back</a>
+    </x-slot:actions>
+</x-admin.page-header>
+
 <form method="POST" action="{{ isset($gallery) ? route('admin.gallery.update', $gallery) : route('admin.gallery.store') }}" class="max-w-2xl">
     @csrf
     @if(isset($gallery)) @method('PUT') @endif

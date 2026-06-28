@@ -2,12 +2,7 @@
 @section('page_title', 'Review Queue')
 
 @section('content')
-<div class="page-header">
-    <div>
-        <h1 class="page-title">Review Queue</h1>
-        <p class="page-subtitle">Submitted and in-review articles awaiting editor action</p>
-    </div>
-</div>
+<x-admin.page-header title="Review Queue" subtitle="Submitted and in-review articles awaiting editor action" />
 
 <div class="card">
     @if($posts->isEmpty())

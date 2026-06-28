@@ -2,24 +2,25 @@
 @section('page_title', isset($post) ? 'Edit Article' : 'New Article')
 
 @section('content')
-@php
-    $lockedForWriter = isset($post) && auth()->user()->isWriter() && ! $post->isEditableByWriter();
-@endphp
-
-<div class="page-header">
-    <div>
-        <h1 class="page-title">{{ isset($post) ? 'Edit Article' : 'New Article' }}</h1>
-        @if(isset($post))
-            <p class="page-subtitle">Status: <span class="badge {{ $post->statusEnum()->badgeClass() }}">{{ $post->statusEnum()->label() }}</span></p>
-        @endif
-    </div>
-    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+<x-admin.page-header :title="isset($post) ? 'Edit Article' : 'New Article'">
+    @if(isset($post))
+        <x-slot:meta>
+            <span class="badge {{ $post->statusEnum()->badgeClass() }}">{{ $post->statusEnum()->label() }}</span>
+        </x-slot:meta>
+    @endif
+    <x-slot:actions>
         @isset($post)
             <a href="{{ route('admin.posts.show', $post) }}" class="btn btn-outline">View</a>
         @endisset
         <a href="{{ route('admin.posts.index') }}" class="btn btn-outline">Back to list</a>
-    </div>
-</div>
+    </x-slot:actions>
+</x-admin.page-header>
+
+@if(isset($post))
+    @php($lockedForWriter = auth()->user()->isWriter() && ! $post->isEditableByWriter())
+@else
+    @php($lockedForWriter = false)
+@endif
 
 @if($lockedForWriter)
     <div class="alert alert-info">This article is with the editorial desk and cannot be edited until an editor sends it back for revision.</div>

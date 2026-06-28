@@ -24,6 +24,16 @@
 /* ── Class-based dark mode ── */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Admin console — isolate from public-site Tailwind base styles */
+body.admin-shell {
+  font-family: 'Roboto', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  background: #F0F4F7;
+  color: #0F2433;
+}
+
 /* ── Base ── */
 @layer base {
     [x-cloak] { display: none !important; }

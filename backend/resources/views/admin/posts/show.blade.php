@@ -2,28 +2,20 @@
 @section('page_title', $post->title)
 
 @section('content')
-<div class="page-header">
-    <div>
-        <p class="page-subtitle" style="margin-bottom: 8px;">
-            <span class="badge {{ $post->statusEnum()->badgeClass() }}">{{ $post->statusEnum()->label() }}</span>
-            @if($post->featured && auth()->user()->isEditor())
-                <span class="badge badge-warning">Featured</span>
-            @endif
-        </p>
-        <h1 class="page-title">{{ $post->title }}</h1>
-        <p class="page-subtitle">
-            By {{ $post->author }}
-            · {{ $post->categories->pluck('name')->join(', ') ?: 'Uncategorized' }}
-            · Updated {{ $post->updated_at->format('M j, Y g:i A') }}
-        </p>
-    </div>
-    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+<x-admin.page-header :title="$post->title" :subtitle="'By '.$post->author.' · '.($post->categories->pluck('name')->join(', ') ?: 'Uncategorized').' · Updated '.$post->updated_at->format('M j, Y g:i A')">
+    <x-slot:meta>
+        <span class="badge {{ $post->statusEnum()->badgeClass() }}">{{ $post->statusEnum()->label() }}</span>
+        @if($post->featured && auth()->user()->isEditor())
+            <span class="badge badge-warning">Featured</span>
+        @endif
+    </x-slot:meta>
+    <x-slot:actions>
         <a href="{{ route('admin.posts.index') }}" class="btn btn-outline">Back to list</a>
         @can('update', $post)
             <a href="{{ route('admin.posts.edit', $post) }}" class="btn btn-primary">Edit</a>
         @endcan
-    </div>
-</div>
+    </x-slot:actions>
+</x-admin.page-header>
 
 @if($post->editorial_notes && in_array($post->status, ['changes_requested', 'rejected']))
     <div class="alert alert-error">Editor notes: {{ $post->editorial_notes }}</div>

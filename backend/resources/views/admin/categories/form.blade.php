@@ -2,6 +2,12 @@
 @section('page_title', isset($category) ? 'Edit Category' : 'New Category')
 
 @section('content')
+<x-admin.page-header :title="isset($category) ? 'Edit Category' : 'New Category'">
+    <x-slot:actions>
+        <a href="{{ route('admin.categories.index') }}" class="btn btn-outline">Back</a>
+    </x-slot:actions>
+</x-admin.page-header>
+
 <div class="max-w-lg">
     <form method="POST" action="{{ isset($category) ? route('admin.categories.update', $category) : route('admin.categories.store') }}" class="bg-white rounded-xl border border-zinc-200 p-6 space-y-5">
         @csrf

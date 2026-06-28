@@ -2,9 +2,11 @@
 @section('page_title', 'Categories')
 
 @section('content')
-<div class="flex justify-end mb-6">
-    <a href="{{ route('admin.categories.create') }}" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition">+ New Category</a>
-</div>
+<x-admin.page-header title="Categories" subtitle="Editorial hubs and section labels">
+    <x-slot:actions>
+        <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">+ New Category</a>
+    </x-slot:actions>
+</x-admin.page-header>
 
 <div class="bg-white rounded-xl border border-zinc-200 overflow-hidden">
     <table class="w-full text-sm">
