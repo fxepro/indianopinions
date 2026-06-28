@@ -18,6 +18,7 @@ class ArticleResource extends JsonResource
             'featured_image' => $this->featured_image,
             'author' => $this->author,
             'reading_time' => $this->reading_time,
+            'reading_time_label' => $this->reading_time_label,
             'featured' => $this->featured,
             'published_at' => $this->published_at?->toIso8601String(),
             'categories' => CategoryResource::collection($this->whenLoaded('categories')),

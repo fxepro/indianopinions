@@ -1,123 +1,223 @@
 @extends('layouts.admin')
-@section('page_title', isset($post) ? 'Edit Post' : 'New Post')
+@section('page_title', isset($post) ? 'Edit Article' : 'New Article')
 
 @section('content')
-<form method="POST" action="{{ isset($post) ? route('admin.posts.update', $post) : route('admin.posts.store') }}" class="max-w-4xl">
-    @csrf
-    @if(isset($post)) @method('PUT') @endif
+@php
+    $lockedForWriter = isset($post) && auth()->user()->isWriter() && ! $post->isEditableByWriter();
+@endphp
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        {{-- Main content --}}
-        <div class="lg:col-span-2 space-y-5">
-            <div class="bg-white rounded-xl border border-zinc-200 p-6 space-y-5">
-                <div>
-                    <label class="admin-label">Title</label>
-                    <input type="text" name="title" value="{{ old('title', $post->title ?? '') }}" required
-                        class="admin-input" placeholder="Post title">
-                    @error('title')<p class="admin-error">{{ $message }}</p>@enderror
-                </div>
-
-                <div>
-                    <label class="admin-label">Slug <span class="text-zinc-400 font-normal">(auto-generated if blank)</span></label>
-                    <input type="text" name="slug" value="{{ old('slug', $post->slug ?? '') }}"
-                        class="admin-input font-mono" placeholder="url-friendly-slug">
-                    @error('slug')<p class="admin-error">{{ $message }}</p>@enderror
-                </div>
-
-                <div>
-                    <label class="admin-label">Excerpt</label>
-                    <textarea name="excerpt" rows="2" class="admin-input resize-none" placeholder="Short description (shown in cards and meta)">{{ old('excerpt', $post->excerpt ?? '') }}</textarea>
-                </div>
-
-                <div>
-                    <label class="admin-label">Content <span class="text-zinc-400 font-normal">(Markdown / HTML supported)</span></label>
-                    <textarea name="content" rows="20" class="admin-input font-mono text-sm resize-y" placeholder="Write your post content here…">{{ old('content', $post->content ?? '') }}</textarea>
-                </div>
-            </div>
-        </div>
-
-        {{-- Sidebar --}}
-        <div class="space-y-5">
-
-            {{-- Publish --}}
-            <div class="bg-white rounded-xl border border-zinc-200 p-5 space-y-4">
-                <h3 class="text-sm font-semibold text-zinc-700">Publish</h3>
-
-                <div>
-                    <label class="admin-label">Status</label>
-                    <select name="status" class="admin-input">
-                        <option value="draft" {{ old('status', $post->status ?? 'draft') === 'draft' ? 'selected' : '' }}>Draft</option>
-                        <option value="published" {{ old('status', $post->status ?? '') === 'published' ? 'selected' : '' }}>Published</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="admin-label">Publish Date</label>
-                    <input type="datetime-local" name="published_at"
-                        value="{{ old('published_at', isset($post->published_at) ? $post->published_at->format('Y-m-d\TH:i') : '') }}"
-                        class="admin-input">
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <input type="hidden" name="featured" value="0">
-                    <input type="checkbox" name="featured" id="featured" value="1" {{ old('featured', $post->featured ?? false) ? 'checked' : '' }}
-                        class="rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500">
-                    <label for="featured" class="text-sm text-zinc-700">Featured post</label>
-                </div>
-
-                <div class="flex gap-3 pt-2">
-                    <button type="submit" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-sm transition">
-                        {{ isset($post) ? 'Update' : 'Create' }}
-                    </button>
-                    <a href="{{ route('admin.posts.index') }}" class="px-4 py-2 border border-zinc-300 text-zinc-600 hover:bg-zinc-50 rounded-lg text-sm transition">Cancel</a>
-                </div>
-            </div>
-
-            {{-- Meta --}}
-            <div class="bg-white rounded-xl border border-zinc-200 p-5 space-y-4">
-                <h3 class="text-sm font-semibold text-zinc-700">Meta</h3>
-                <div>
-                    <label class="admin-label">Author</label>
-                    <input type="text" name="author" value="{{ old('author', $post->author ?? 'Admin') }}" class="admin-input">
-                </div>
-                <div>
-                    <label class="admin-label">Featured Image URL</label>
-                    <input type="text" name="featured_image" value="{{ old('featured_image', $post->featured_image ?? '') }}" class="admin-input" placeholder="https://…">
-                </div>
-            </div>
-
-            {{-- Categories --}}
-            <div class="bg-white rounded-xl border border-zinc-200 p-5">
-                <h3 class="text-sm font-semibold text-zinc-700 mb-3">Categories</h3>
-                <div class="space-y-2 max-h-48 overflow-y-auto">
-                    @foreach($categories as $cat)
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" name="categories[]" value="{{ $cat->id }}"
-                                {{ in_array($cat->id, old('categories', isset($post) ? $post->categories->pluck('id')->toArray() : [])) ? 'checked' : '' }}
-                                class="rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500">
-                            <span class="text-sm text-zinc-700">{{ $cat->name }}</span>
-                        </label>
-                    @endforeach
-                </div>
-            </div>
-
-            {{-- Tags --}}
-            <div class="bg-white rounded-xl border border-zinc-200 p-5">
-                <h3 class="text-sm font-semibold text-zinc-700 mb-3">Tags</h3>
-                <div class="space-y-2 max-h-48 overflow-y-auto">
-                    @foreach($tags as $tag)
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" name="tags[]" value="{{ $tag->id }}"
-                                {{ in_array($tag->id, old('tags', isset($post) ? $post->tags->pluck('id')->toArray() : [])) ? 'checked' : '' }}
-                                class="rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500">
-                            <span class="text-sm text-zinc-700">{{ $tag->name }}</span>
-                        </label>
-                    @endforeach
-                </div>
-            </div>
-
-        </div>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ isset($post) ? 'Edit Article' : 'New Article' }}</h1>
+        @if(isset($post))
+            <p class="page-subtitle">Status: <span class="badge {{ $post->statusEnum()->badgeClass() }}">{{ $post->statusEnum()->label() }}</span></p>
+        @endif
     </div>
-</form>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        @isset($post)
+            <a href="{{ route('admin.posts.show', $post) }}" class="btn btn-outline">View</a>
+        @endisset
+        <a href="{{ route('admin.posts.index') }}" class="btn btn-outline">Back to list</a>
+    </div>
+</div>
+
+@if($lockedForWriter)
+    <div class="alert alert-info">This article is with the editorial desk and cannot be edited until an editor sends it back for revision.</div>
+@endif
+
+@if(isset($post) && $post->editorial_notes && in_array($post->status, ['changes_requested', 'rejected']))
+    <div class="alert alert-error">Editor notes: {{ $post->editorial_notes }}</div>
+@endif
+
+@error('workflow')
+    <div class="alert alert-error">{{ $message }}</div>
+@enderror
+
+<div class="form-grid-2">
+    <div class="card">
+        <form id="article-form" method="POST" action="{{ isset($post) ? route('admin.posts.update', $post) : route('admin.posts.store') }}">
+            @csrf
+            @if(isset($post)) @method('PUT') @endif
+            <fieldset @disabled($lockedForWriter) style="border: none; margin: 0; padding: 0;">
+            <div class="card-body" style="display: grid; gap: 16px;">
+                <div>
+                    <label class="field-label">Headline</label>
+                    <input type="text" name="title" value="{{ old('title', $post->title ?? '') }}" required class="input">
+                    @error('title')<p class="field-error">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label class="field-label">Slug</label>
+                    <input type="text" name="slug" value="{{ old('slug', $post->slug ?? '') }}" class="input">
+                </div>
+                <div>
+                    <label class="field-label">Excerpt</label>
+                    <textarea name="excerpt" rows="2" class="textarea">{{ old('excerpt', $post->excerpt ?? '') }}</textarea>
+                </div>
+                <div>
+                    <label class="field-label">Body (HTML / Markdown)</label>
+                    <textarea name="content" rows="18" class="textarea" style="font-family: monospace;">{{ old('content', $post->content ?? '') }}</textarea>
+                </div>
+
+                <div class="card" style="box-shadow: none;">
+                    <div class="card-head"><h3 class="card-title">Metadata</h3></div>
+                    <div class="card-body" style="display: grid; gap: 12px;">
+                        <div>
+                            <label class="field-label">Byline</label>
+                            <input type="text" name="author" value="{{ old('author', $post->author ?? auth()->user()->name) }}" class="input">
+                        </div>
+                        <div>
+                            <label class="field-label">Featured image URL</label>
+                            <input type="text" name="featured_image" value="{{ old('featured_image', $post->featured_image ?? '') }}" class="input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="box-shadow: none;">
+                    <div class="card-head"><h3 class="card-title">Categories & Tags</h3></div>
+                        <div class="card-body" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div>
+                                @foreach($categories as $cat)
+                                    <label style="display:flex;gap:8px;font-size:14px;margin-bottom:6px;">
+                                        <input type="checkbox" name="categories[]" value="{{ $cat->id }}"
+                                            {{ in_array($cat->id, old('categories', isset($post) ? $post->categories->pluck('id')->toArray() : [])) ? 'checked' : '' }}>
+                                        {{ $cat->name }}
+                                    </label>
+                                @endforeach
+                            </div>
+                            <div>
+                                @foreach($tags as $tag)
+                                    <label style="display:flex;gap:8px;font-size:14px;margin-bottom:6px;">
+                                        <input type="checkbox" name="tags[]" value="{{ $tag->id }}"
+                                            {{ in_array($tag->id, old('tags', isset($post) ? $post->tags->pluck('id')->toArray() : [])) ? 'checked' : '' }}>
+                                        {{ $tag->name }}
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+
+                @unless($lockedForWriter)
+                    <button type="submit" class="btn btn-primary">{{ isset($post) ? 'Save Article' : 'Save Draft' }}</button>
+                @endunless
+            </div>
+            </fieldset>
+        </form>
+    </div>
+
+    @if(isset($post))
+        <div style="display: grid; gap: 16px; align-content: start;">
+            @if(auth()->user()->isEditor())
+                <div class="card">
+                    <div class="card-head"><h3 class="card-title">Editorial</h3></div>
+                    <div class="card-body">
+                        <label style="display:flex;gap:8px;align-items:flex-start;font-size:14px;cursor:pointer;">
+                            <input type="checkbox" name="featured" value="1" form="article-form" style="margin-top:3px;"
+                                @checked(old('featured', $post->featured ?? false))>
+                            <span>
+                                <strong>Featured article</strong><br>
+                                <span style="color:var(--text-muted);font-size:13px;">Editor only. Prioritizes this story in homepage and hub layout fallbacks.</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            @endif
+
+            <div class="card">
+                <div class="card-head"><h3 class="card-title">Workflow</h3></div>
+                <div class="card-body" style="display: grid; gap: 16px;">
+                    <div>
+                        <span class="field-label">Current status</span>
+                        <p style="margin: 6px 0 0;">
+                            <span class="badge {{ $post->statusEnum()->badgeClass() }}">{{ $post->statusEnum()->label() }}</span>
+                        </p>
+                    </div>
+
+                    @can('submit', $post)
+                        <form method="POST" action="{{ route('admin.posts.submit', $post) }}">
+                            @csrf
+                            <label class="field-label">Note to editors (optional)</label>
+                            <textarea name="submission_notes" rows="2" class="textarea" style="min-height:60px;">{{ old('submission_notes', $post->submission_notes) }}</textarea>
+                            <button type="submit" class="btn btn-navy btn-block" style="margin-top:8px;">Submit for Review</button>
+                        </form>
+                    @endcan
+
+                    @if(auth()->user()->isEditor() && !empty($allowedTransitions))
+                        <form method="POST" action="{{ route('admin.posts.transition', $post) }}">
+                            @csrf
+                            <label class="field-label">Change status (editor only)</label>
+                            <select name="status" class="input" required>
+                                <option value="" disabled selected>Select next status…</option>
+                                @foreach($allowedTransitions as $status)
+                                    <option value="{{ $status->value }}">{{ $status->label() }}</option>
+                                @endforeach
+                            </select>
+                            <label class="field-label" style="margin-top:12px;">Note</label>
+                            <textarea name="note" rows="3" class="textarea" style="min-height:72px;" placeholder="Required when requesting changes or rejecting. Optional otherwise.">{{ old('note') }}</textarea>
+                            <p style="font-size:12px;color:var(--text-muted);margin:6px 0 0;">Use <strong>Archived</strong> to unpublish a live article. All changes are logged below.</p>
+                            <button type="submit" class="btn btn-primary btn-block" style="margin-top:8px;">Update Status</button>
+                        </form>
+                    @endif
+
+                    @if(auth()->user()->isWriter() && in_array($post->status, ['submitted', 'in_review']))
+                        <p style="font-size:14px;color:var(--text-muted);margin:0;">With the editorial desk — you will be notified when it is sent back for revision.</p>
+                    @elseif($post->status === 'published' && auth()->user()->isWriter())
+                        <p style="font-size:14px;color:var(--text-muted);margin:0;">Published {{ $post->published_at?->format('M j, Y g:i A') }}.</p>
+                    @elseif($post->status === 'archived' && auth()->user()->isEditor())
+                        <p style="font-size:14px;color:var(--text-muted);margin:0;">Archived — not visible on the public site. Restore to Draft to rework.</p>
+                    @endif
+
+                    @if(isset($workflowEvents) && $workflowEvents->isNotEmpty())
+                        <div style="border-top: 1px solid var(--border); padding-top: 12px;">
+                            <h4 style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 12px;">Status history</h4>
+                            <ul style="list-style: none; margin: 0; padding: 0; display: grid; gap: 12px;">
+                                @foreach($workflowEvents as $event)
+                                    <li style="font-size: 13px; line-height: 1.5; border-left: 2px solid var(--border); padding-left: 12px;">
+                                        <div style="color: var(--text-muted); font-size: 12px;">
+                                            {{ $event->created_at->format('M j, Y g:i A') }}
+                                            · {{ $event->user?->name ?? 'System' }}
+                                        </div>
+                                        <div style="margin-top: 2px;">
+                                            @if($event->from_status)
+                                                <span class="badge badge-muted">{{ $event->fromStatusEnum()?->label() ?? $event->from_status }}</span>
+                                                →
+                                            @else
+                                                Created →
+                                            @endif
+                                            <span class="badge {{ $event->toStatusEnum()->badgeClass() }}">{{ $event->toStatusEnum()->label() }}</span>
+                                        </div>
+                                        @if($event->note)
+                                            <p style="margin: 6px 0 0; color: var(--text); white-space: pre-wrap;">{{ $event->note }}</p>
+                                        @endif
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    @else
+        @if(auth()->user()->isEditor())
+            <div class="card">
+                <div class="card-head"><h3 class="card-title">Editorial</h3></div>
+                <div class="card-body">
+                    <label style="display:flex;gap:8px;align-items:flex-start;font-size:14px;cursor:pointer;">
+                        <input type="checkbox" name="featured" value="1" form="article-form" style="margin-top:3px;"
+                            @checked(old('featured', false))>
+                        <span>
+                            <strong>Featured article</strong><br>
+                            <span style="color:var(--text-muted);font-size:13px;">Editor only. Saves with the draft when you create the article.</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+        @else
+        <div class="card">
+            <div class="card-body">
+                <p style="font-size:14px;color:var(--text-muted);margin:0;">Save your draft first, then submit it to the editorial desk for approval.</p>
+            </div>
+        </div>
+        @endif
+    @endif
+</div>
 @endsection

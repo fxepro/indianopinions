@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use App\Models\Category;
 use App\Models\Tag;
 use App\Models\User;
@@ -12,9 +13,14 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        User::firstOrCreate(
-            ['email' => 'admin@indianopinions.com'],
-            ['name' => 'Editor', 'password' => Hash::make('password')]
+        User::updateOrCreate(
+            ['email' => 'editor@indianopinions.com'],
+            ['name' => 'Desk Editor', 'password' => Hash::make('password'), 'role' => UserRole::Editor->value, 'is_active' => true]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'writer@indianopinions.com'],
+            ['name' => 'Staff Writer', 'password' => Hash::make('password'), 'role' => UserRole::Writer->value, 'is_active' => true]
         );
 
         $categories = [
@@ -32,9 +38,10 @@ class DatabaseSeeder extends Seeder
             Category::firstOrCreate(['name' => $category['name']], $category);
         }
 
-        $tagNames = ['india', 'policy', 'economy', 'diaspora', 'technology', 'society', 'analysis', 'opinion'];
-        foreach ($tagNames as $name) {
+        foreach (['india', 'policy', 'economy', 'diaspora', 'technology', 'society', 'analysis', 'opinion'] as $name) {
             Tag::firstOrCreate(['name' => $name]);
         }
+
+        $this->call(DemoArticlesSeeder::class);
     }
 }

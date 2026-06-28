@@ -27,7 +27,35 @@ npm run build
 php artisan serve
 ```
 
-Admin login: **admin@indianopinions.com** / **password** (change after first login)
+Admin login: **editor@indianopinions.com** / **password** (editor) or **writer@indianopinions.com** / **password** (writer). Change after first login.
+
+## Editorial MVP
+
+Two roles with a mandatory approval workflow:
+
+| Role | Can do |
+|------|--------|
+| **Writer** | Create drafts, edit own drafts/revisions, submit for review |
+| **Editor** | Everything writers can do, plus review queue, approve/publish, request changes, manage categories/tags/staff/gallery |
+
+**Article statuses:** `draft` → `submitted` → `published` (or `changes_requested` → back to writer → resubmit).
+
+Editors must approve via the **Review Queue** — writers cannot publish directly.
+
+### Permissions matrix
+
+Defined in `config/permissions.php`. Live view: **Admin → Permissions**.
+
+| Area | Writer | Editor |
+|------|--------|--------|
+| Dashboard, own articles | Yes | Yes |
+| Review queue, publish | — | Yes |
+| Categories, tags, gallery, staff | — | Yes |
+| Homepage & hub orchestration | — | Yes |
+
+### Page orchestration
+
+Editors curate slots at **Admin → Homepage** and **Admin → Hub Pages**. Empty slots fall back to latest published articles.
 
 ## API endpoints
 
@@ -35,6 +63,8 @@ Admin login: **admin@indianopinions.com** / **password** (change after first log
 |--------|------|-------------|
 | GET | `/api/articles` | Paginated published articles (`?category=politics&featured=1`) |
 | GET | `/api/articles/{slug}` | Single article |
+| GET | `/api/layout/homepage` | Resolved homepage layout |
+| GET | `/api/layout/hubs/{slug}` | Resolved hub page layout |
 | GET | `/api/categories` | All editorial hubs |
 | GET | `/api/categories/{slug}` | Hub with its articles |
 | POST | `/api/newsletter/subscribe` | `{ "email": "..." }` |
@@ -55,7 +85,7 @@ In Netlify, set:
 API_URL=https://your-backend.up.railway.app
 ```
 
-Fetch articles from `${API_URL}/api/articles` in the Next.js app (not yet wired).
+Fetch layout from `${API_URL}/api/layout/homepage` and hub pages from `/api/layout/hubs/{slug}`.
 
 ## Editorial categories (seeded)
 

@@ -10,7 +10,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::withCount(['posts', 'portfolioItems', 'papers'])->orderBy('name')->paginate(20);
+        $categories = Category::withCount('posts')->orderBy('name')->paginate(20);
         return view('admin.categories.index', compact('categories'));
     }
 

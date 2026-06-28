@@ -2,48 +2,84 @@
 @section('page_title', 'Dashboard')
 
 @section('content')
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-    @foreach([
-        ['label' => 'Posts', 'value' => $stats['posts_total'], 'sub' => $stats['posts_published'] . ' published'],
-        ['label' => 'Drafts', 'value' => $stats['posts_draft'], 'sub' => 'awaiting publish'],
-        ['label' => 'Categories', 'value' => $stats['categories'], 'sub' => 'editorial hubs'],
-        ['label' => 'Tags', 'value' => $stats['tags'], 'sub' => 'topic labels'],
-    ] as $stat)
-        <div class="bg-white rounded-xl p-5 border border-zinc-200">
-            <p class="text-lg font-extrabold text-zinc-900">{{ $stat['value'] }}</p>
-            <p class="text-sm font-medium text-zinc-600 mt-0.5">{{ $stat['label'] }}</p>
-            <p class="text-xs text-zinc-400 mt-1">{{ $stat['sub'] }}</p>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Editorial Dashboard</h1>
+        <p class="page-subtitle">{{ auth()->user()->roleLabel() }} workspace</p>
+    </div>
+    <a href="{{ route('admin.posts.create') }}" class="btn btn-primary">+ New Article</a>
+</div>
+
+<div class="grid-stats" style="margin-bottom: 24px;">
+    @foreach($stats as $stat)
+        <div class="stat">
+            <div class="stat-accent"></div>
+            <div class="stat-body">
+                <p class="stat-label">{{ $stat['label'] }}</p>
+                <p class="stat-value">{{ $stat['value'] }}</p>
+                <p class="stat-sub">{{ $stat['sub'] }}</p>
+            </div>
         </div>
     @endforeach
 </div>
 
-<div class="flex flex-wrap gap-3 mb-8">
-    <a href="{{ route('admin.posts.create') }}" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition">+ New Article</a>
-    <a href="{{ route('admin.categories.index') }}" class="px-4 py-2 bg-white hover:bg-zinc-50 border border-zinc-300 text-zinc-700 text-sm font-medium rounded-lg transition">Manage Categories</a>
-</div>
-
-<div class="bg-white rounded-xl border border-zinc-200">
-    <div class="px-6 py-4 border-b border-zinc-100 flex items-center justify-between">
-        <h2 class="font-semibold text-zinc-800">Recent Articles</h2>
-        <a href="{{ route('admin.posts.index') }}" class="text-sm text-indigo-600 hover:underline">View all</a>
-    </div>
-    <div class="divide-y divide-zinc-100">
-        @forelse($recentPosts as $post)
-            <div class="px-6 py-4 flex items-center justify-between gap-4">
-                <div class="min-w-0">
-                    <p class="text-sm font-medium text-zinc-800 truncate">{{ $post->title }}</p>
-                    <p class="text-xs text-zinc-400 mt-0.5">{{ $post->created_at->diffForHumans() }}</p>
-                </div>
-                <div class="flex items-center gap-3 flex-shrink-0">
-                    <span class="text-xs px-2 py-0.5 rounded-full {{ $post->status === 'published' ? 'bg-emerald-100 text-emerald-700' : 'bg-zinc-100 text-zinc-500' }}">
-                        {{ $post->status }}
-                    </span>
-                    <a href="{{ route('admin.posts.edit', $post) }}" class="text-xs text-indigo-600 hover:underline">Edit</a>
-                </div>
+<div style="display: grid; gap: 24px;">
+    @if($reviewQueue->isNotEmpty())
+        <div class="card">
+            <div class="card-head">
+                <h2 class="card-title">Review Queue</h2>
+                <a href="{{ route('admin.review.index') }}" class="link">Open queue</a>
             </div>
-        @empty
-            <div class="px-6 py-8 text-center text-sm text-zinc-400">No articles yet. <a href="{{ route('admin.posts.create') }}" class="text-indigo-600 hover:underline">Create one</a></div>
-        @endforelse
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Writer</th>
+                        <th>Submitted</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($reviewQueue as $post)
+                        <tr>
+                            <td><a href="{{ route('admin.posts.show', $post) }}" class="link">{{ $post->title }}</a></td>
+                            <td>{{ $post->authorUser?->name ?? $post->author }}</td>
+                            <td>{{ $post->updated_at->diffForHumans() }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
+
+    <div class="card">
+        <div class="card-head">
+            <h2 class="card-title">Recent Articles</h2>
+            <a href="{{ route('admin.posts.index') }}" class="link">View all</a>
+        </div>
+        @if($recentPosts->isEmpty())
+            <div class="empty">No articles yet. <a href="{{ route('admin.posts.create') }}" class="link">Write the first story</a></div>
+        @else
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($recentPosts as $post)
+                        <tr>
+                            <td>{{ $post->title }}</td>
+                            <td>{{ $post->authorUser?->name ?? $post->author }}</td>
+                            <td><span class="badge {{ $post->statusEnum()->badgeClass() }}">{{ $post->statusEnum()->label() }}</span></td>
+                            <td><a href="{{ route('admin.posts.show', $post) }}" class="link">View</a></td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
     </div>
 </div>
 @endsection

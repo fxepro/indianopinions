@@ -1,0 +1,8 @@
+.env.local
+.env*.local
+backend/vendor/
+backend/node_modules/
+backend/storage/*.key
+backend/database/database.sqlite
+studio/.next/
+studio/node_modules/

@@ -1,23 +1,25 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================================
+   DESIGN TOKEN LAYER — single source of truth (Indian Opinions editorial)
+   ============================================================================ */
 @layer base {
   :root {
-    --background: 40 27% 95%; /* Warm Ivory #F7F3EC */
-    --foreground: 0 5% 19%; /* Charcoal #343131 */
+    --background: 40 27% 95%;
+    --foreground: 0 5% 19%;
     --card: 40 27% 95%;
     --card-foreground: 0 5% 19%;
     --popover: 40 27% 95%;
     --popover-foreground: 0 5% 19%;
-    --primary: 0 100% 34%; /* Editorial Red #AC0000 */
+    --primary: 0 100% 34%;
     --primary-foreground: 40 27% 95%;
-    --secondary: 35 15% 86%; /* Stone #E6E0D8 */
+    --secondary: 35 15% 86%;
     --secondary-foreground: 0 5% 19%;
     --muted: 35 15% 86%;
-    --muted-foreground: 0 5% 45%; /* Slateish #4A4747 scaled */
-    --accent: 38 40% 43%; /* Gold Accent #9A7A43 */
+    --muted-foreground: 0 5% 45%;
+    --accent: 38 40% 43%;
     --accent-foreground: 40 27% 95%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
@@ -25,38 +27,226 @@
     --input: 0 0% 82%;
     --ring: 0 100% 34%;
     --radius: 0.25rem;
-  }
-}
 
-@layer base {
+    --brand: 0 100% 34%;
+    --ink: 0 5% 19%;
+    --ink-muted: 0 5% 45%;
+    --cream: 40 27% 95%;
+    --stone: 35 15% 86%;
+    --gold: 38 40% 43%;
+    --container-max: 1350px;
+    --page-body-pb: 3rem;
+    --header-chrome: 5rem;
+  }
+
   * {
     @apply border-border;
   }
+
+  html {
+    font-size: 16px;
+  }
+
   body {
     @apply bg-background text-foreground selection:bg-accent/20;
     font-variant-ligatures: common-ligatures;
+    font-size: 1rem;
+    line-height: 1.6;
   }
+
   h1, h2, h3, h4, h5, h6 {
     @apply font-headline font-bold leading-tight tracking-tight;
   }
 }
 
-/* Custom newspaper column style */
-.newspaper-cols-2 {
-  column-count: 1;
-}
+/* ============================================================================
+   COMPONENT LAYER — pages reference these; no raw design values in pages
+   ============================================================================ */
+@layer components {
+  .container-app {
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
 
-@media (min-width: 768px) {
-  .newspaper-cols-2 {
-    column-count: 2;
-    column-gap: 3rem;
+  .page-main {
+    min-height: calc(100vh - var(--header-chrome));
+  }
+
+  .page-body {
+    padding-top: 2rem;
+    padding-bottom: var(--page-body-pb);
+  }
+
+  .section {
+    @apply py-8 md:py-12;
+  }
+
+  .eyebrow {
+    @apply text-primary uppercase text-xs font-bold tracking-[0.3em];
+  }
+
+  .section-heading {
+    @apply eyebrow border-b border-primary/20 pb-2 mb-6;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 font-body text-sm font-bold uppercase tracking-widest;
+    @apply px-6 py-2 rounded transition-colors;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+    min-height: 44px;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary text-primary-foreground hover:bg-primary/90;
+  }
+
+  .btn-outline {
+    @apply btn border border-border bg-transparent text-foreground hover:bg-secondary;
+  }
+
+  .card {
+    @apply bg-card border border-border rounded-lg shadow-sm;
+  }
+
+  .card-body {
+    @apply p-6;
+  }
+
+  .link {
+    @apply text-primary font-medium hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+  }
+
+  .site-header {
+    @apply w-full pt-10 pb-6 border-b border-foreground/10;
+  }
+
+  .site-header-inner {
+    @apply text-center;
+  }
+
+  .site-header-meta {
+    @apply flex justify-between items-center text-[10px] uppercase tracking-[0.2em] font-medium mb-4 text-muted-foreground border-b border-border pb-2;
+  }
+
+  .site-header-meta-accent {
+    @apply hidden md:block text-primary font-bold italic;
+  }
+
+  .site-logo-link {
+    @apply inline-block;
+  }
+
+  .site-logo {
+    @apply font-headline text-6xl md:text-9xl tracking-tighter mb-2 transition-colors leading-none;
+  }
+
+  .site-logo-link:hover .site-logo {
+    @apply text-primary;
+  }
+
+  .site-tagline {
+    @apply font-headline italic text-lg md:text-2xl text-muted-foreground mt-2;
+  }
+
+  .site-header-rule {
+    @apply mt-10 flex justify-between items-center border-y border-foreground py-3 text-xs font-bold uppercase tracking-widest;
+  }
+
+  .site-header-rule-side {
+    @apply flex-1 hidden md:block;
+  }
+
+  .site-header-date {
+    @apply flex-1 text-center font-headline italic tracking-normal;
+  }
+
+  .site-nav {
+    @apply mt-4 flex justify-center gap-6 md:gap-12 overflow-x-auto whitespace-nowrap py-2;
+  }
+
+  .site-nav-link {
+    @apply text-sm font-bold uppercase tracking-widest hover:text-primary transition-colors border-b border-transparent hover:border-primary pb-1;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .site-nav-link-active {
+    @apply text-primary border-primary;
+  }
+
+  .site-footer {
+    @apply bg-background border-t border-border py-12;
+  }
+
+  .site-footer-inner {
+    @apply flex flex-col md:flex-row justify-between items-center gap-8;
+  }
+
+  .site-footer-brand {
+    @apply text-center md:text-left;
+  }
+
+  .site-footer-logo {
+    @apply font-headline text-3xl font-bold mb-1;
+  }
+
+  .site-footer-legal {
+    @apply text-xs uppercase tracking-widest text-muted-foreground;
+  }
+
+  .site-footer-nav {
+    @apply flex flex-wrap justify-center gap-8 text-[10px] font-bold uppercase tracking-widest;
+  }
+
+  .site-footer-link {
+    @apply hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .cta-band {
+    @apply card p-8 flex flex-col md:flex-row gap-8 items-center border-accent/20 bg-accent/5;
+  }
+
+  .sidebar-panel {
+    @apply border-l border-border pl-12 hidden lg:block;
+  }
+
+  .quote-panel {
+    @apply mt-12 bg-secondary p-6 rounded-lg;
   }
 }
 
-.newspaper-divider {
-  @apply border-t-[0.5px] border-border my-6;
-}
+@layer utilities {
+  .newspaper-cols-2 {
+    column-count: 1;
+  }
 
-.serif-body {
-  @apply font-headline text-lg leading-relaxed text-[#4A4747];
+  @media (min-width: 768px) {
+    .newspaper-cols-2 {
+      column-count: 2;
+      column-gap: 3rem;
+    }
+  }
+
+  .newspaper-divider {
+    @apply border-t-[0.5px] border-border my-6;
+  }
+
+  .serif-body {
+    @apply font-headline text-lg leading-relaxed text-muted-foreground;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-nav-link,
+    .site-logo-link,
+    .btn {
+      transition: none;
+    }
+  }
 }

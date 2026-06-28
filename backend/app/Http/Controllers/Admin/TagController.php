@@ -10,7 +10,7 @@ class TagController extends Controller
 {
     public function index()
     {
-        $tags = Tag::withCount('posts', 'portfolioItems', 'papers')->orderBy('name')->paginate(30);
+        $tags = Tag::withCount('posts')->orderBy('name')->paginate(30);
         return view('admin.tags.index', compact('tags'));
     }
 

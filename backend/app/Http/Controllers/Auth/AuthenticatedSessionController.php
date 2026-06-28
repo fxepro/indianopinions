@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -15,17 +17,45 @@ class AuthenticatedSessionController extends Controller
 
     public function store(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
+        $validated = $request->validate([
+            'login' => 'required|string|max:255',
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate();
-            return redirect()->intended(route('admin.dashboard'));
+        $user = $this->resolveUser($validated['login']);
+
+        if (! $user || ! Hash::check($validated['password'], $user->password)) {
+            return back()
+                ->withErrors(['login' => 'The provided credentials do not match our records.'])
+                ->onlyInput('login');
         }
 
-        return back()->withErrors(['email' => 'The provided credentials do not match our records.'])->onlyInput('email');
+        if (! $user->is_active) {
+            return back()
+                ->withErrors(['login' => 'This account has been deactivated.'])
+                ->onlyInput('login');
+        }
+
+        Auth::login($user, $request->boolean('remember'));
+        $request->session()->regenerate();
+
+        return redirect()->intended(route('admin.posts.index'));
+    }
+
+    private function resolveUser(string $login): ?User
+    {
+        $login = trim($login);
+
+        if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+            return User::where('email', $login)->first();
+        }
+
+        $needle = strtolower($login);
+
+        return User::query()
+            ->whereRaw('LOWER(name) = ?', [$needle])
+            ->orWhereRaw('LOWER(email) LIKE ?', [$needle.'@%'])
+            ->first();
     }
 
     public function destroy(Request $request)

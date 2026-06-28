@@ -1,63 +1,73 @@
 @extends('layouts.admin')
-@section('page_title', 'Posts')
+@section('page_title', 'Articles')
 
 @section('content')
-<div class="flex items-center justify-between mb-6">
-    <div></div>
-    <a href="{{ route('admin.posts.create') }}" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition">+ New Post</a>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Articles</h1>
+        <p class="page-subtitle">Manage the editorial pipeline</p>
+    </div>
+    @can('create', App\Models\Post::class)
+        <a href="{{ route('admin.posts.create') }}" class="btn btn-primary">+ New Article</a>
+    @endcan
 </div>
 
-<div class="bg-white rounded-xl border border-zinc-200 overflow-hidden">
-    <table class="w-full text-sm">
-        <thead>
-            <tr class="border-b border-zinc-100 text-left text-xs uppercase tracking-wider text-zinc-400">
-                <th class="px-6 py-3 font-medium">Title</th>
-                <th class="px-6 py-3 font-medium hidden md:table-cell">Categories</th>
-                <th class="px-6 py-3 font-medium">Status</th>
-                <th class="px-6 py-3 font-medium hidden lg:table-cell">Date</th>
-                <th class="px-6 py-3 font-medium text-right">Actions</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-zinc-100">
-            @forelse($posts as $post)
-                <tr class="hover:bg-zinc-50">
-                    <td class="px-6 py-4">
-                        <p class="font-medium text-zinc-900 truncate max-w-xs">{{ $post->title }}</p>
-                        @if($post->featured)
-                            <span class="text-xs text-amber-500">★ Featured</span>
-                        @endif
-                    </td>
-                    <td class="px-6 py-4 hidden md:table-cell">
-                        <div class="flex flex-wrap gap-1">
-                            @foreach($post->categories->take(2) as $cat)
-                                <span class="text-xs px-1.5 py-0.5 rounded-full" style="background-color: {{ $cat->color }}20; color: {{ $cat->color }}">{{ $cat->name }}</span>
-                            @endforeach
-                        </div>
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="text-xs px-2 py-0.5 rounded-full {{ $post->status === 'published' ? 'bg-emerald-100 text-emerald-700' : 'bg-zinc-100 text-zinc-500' }}">
-                            {{ $post->status }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 hidden lg:table-cell text-zinc-400">
-                        {{ $post->published_at?->format('M j, Y') ?? '—' }}
-                    </td>
-                    <td class="px-6 py-4 text-right whitespace-nowrap">
-                        <a href="{{ route('blog.show', $post->slug) }}" target="_blank" class="text-zinc-400 hover:text-zinc-600 mr-3 text-xs">View</a>
-                        <a href="{{ route('admin.posts.edit', $post) }}" class="text-indigo-600 hover:text-indigo-800 mr-3 text-xs font-medium">Edit</a>
-                        <form method="POST" action="{{ route('admin.posts.destroy', $post) }}" class="inline" onsubmit="return confirm('Delete this post?')">
-                            @csrf @method('DELETE')
-                            <button class="text-red-500 hover:text-red-700 text-xs">Delete</button>
-                        </form>
-                    </td>
+<div class="card" style="margin-bottom: 16px;">
+    <div class="card-body" style="display: flex; flex-wrap: gap: 8px;">
+        <a href="{{ route('admin.posts.index') }}" class="badge {{ !$currentStatus ? 'badge-primary' : 'badge-muted' }}">All</a>
+        @foreach($statuses as $status)
+            <a href="{{ route('admin.posts.index', ['status' => $status->value]) }}"
+               class="badge {{ $currentStatus === $status->value ? 'badge-primary' : 'badge-muted' }}">
+                {{ $status->label() }}
+            </a>
+        @endforeach
+    </div>
+</div>
+
+<div class="card">
+    @if($posts->isEmpty())
+        <div class="empty">No articles match this filter.</div>
+    @else
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Categories</th>
+                    <th>Status</th>
+                    <th>Updated</th>
+                    <th></th>
                 </tr>
-            @empty
-                <tr><td colspan="5" class="px-6 py-12 text-center text-zinc-400">No posts yet.</td></tr>
-            @endforelse
-        </tbody>
-    </table>
-    @if($posts->hasPages())
-        <div class="px-6 py-4 border-t border-zinc-100">{{ $posts->links() }}</div>
+            </thead>
+            <tbody>
+                @foreach($posts as $post)
+                    <tr class="table-row-link" onclick="window.location='{{ route('admin.posts.show', $post) }}'" style="cursor: pointer;">
+                        <td>
+                            <a href="{{ route('admin.posts.show', $post) }}" class="link" onclick="event.stopPropagation()"><strong>{{ $post->title }}</strong></a>
+                            @if($post->featured && auth()->user()->isEditor())<br><span class="badge badge-warning">Featured</span>@endif
+                        </td>
+                        <td>{{ $post->authorUser?->name ?? $post->author }}</td>
+                        <td>{{ $post->categories->pluck('name')->join(', ') ?: '—' }}</td>
+                        <td><span class="badge {{ $post->statusEnum()->badgeClass() }}">{{ $post->statusEnum()->label() }}</span></td>
+                        <td>{{ $post->updated_at->format('M j, Y') }}</td>
+                        <td style="white-space: nowrap;" onclick="event.stopPropagation()">
+                            @can('update', $post)
+                                <a href="{{ route('admin.posts.edit', $post) }}" class="link">Edit</a>
+                            @endcan
+                            @can('delete', $post)
+                                <form method="POST" action="{{ route('admin.posts.destroy', $post) }}" style="display:inline" onsubmit="return confirm('Delete this article?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="btn btn-ghost btn-sm" style="color: var(--danger);">Delete</button>
+                                </form>
+                            @endcan
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+        @if($posts->hasPages())
+            <div class="card-body" style="border-top: 1px solid var(--border);">{{ $posts->links() }}</div>
+        @endif
     @endif
 </div>
 @endsection
