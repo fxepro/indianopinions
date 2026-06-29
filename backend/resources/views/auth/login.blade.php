@@ -3,41 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign in — Indian Opinions Admin</title>
+    <title>Sign in — Indian Opinions</title>
     @vite(['resources/css/app.css'])
 </head>
-<body class="admin-shell" style="display:flex;align-items:center;justify-content:center;padding:24px;">
-    <div style="width:100%;max-width:400px;">
-        <div style="text-align:center;margin-bottom:32px;">
-            <h1 style="font-size:1.5rem;font-weight:700;color:var(--navy);margin:0;">Indian Opinions</h1>
-            <p style="color:var(--text-muted);margin-top:8px;font-size:14px;">Publishing admin</p>
-        </div>
+<body class="admin-shell admin-login-page">
+    <main class="admin-login">
+        <header class="admin-login-masthead">
+            <div class="admin-login-meta">
+                <span>Insight • Intelligence • Independent Editorial</span>
+                <span class="admin-login-meta-accent">RECLAIMING THE NARRATIVE</span>
+                <span>New Delhi • London • New York</span>
+            </div>
 
-        <div class="card">
-            <div class="card-body" style="display:grid;gap:16px;">
-                <h2 style="font-size:1rem;font-weight:700;margin:0;">Staff sign in</h2>
+            <div class="admin-login-brand-row">
+                <a href="{{ config('app.frontend_url', 'https://indianopinions.com') }}" class="admin-login-brand-link">
+                    <h1 class="admin-login-logo" aria-label="Indian Opinions">
+                        <span class="admin-login-logo-word">Indian</span>
+                        <span class="admin-login-logo-word">Opinions</span>
+                    </h1>
+                </a>
+                <div class="admin-login-hub-head">
+                    <p class="admin-login-hub-title">Critical Perspectives for the Global Sub-continent</p>
+                </div>
+            </div>
+        </header>
 
-                @if($errors->any())
-                    <div class="alert alert-error" style="margin:0;">{{ $errors->first() }}</div>
-                @endif
+        <div class="admin-login-card-wrap">
+            <div class="card admin-login-card">
+                <div class="card-body admin-login-card-body">
+                    <h2 class="admin-login-title">Sign in</h2>
 
-                <form method="POST" action="{{ route('login') }}" style="display:grid;gap:14px;">
-                    @csrf
-                    <div>
-                        <label class="field-label">Email or username</label>
-                        <input type="text" name="login" value="{{ old('login') }}" required autofocus autocomplete="username" class="input" placeholder="editor or editor@indianopinions.com">
-                    </div>
-                    <div>
-                        <label class="field-label">Password</label>
-                        <input type="password" name="password" required class="input">
-                    </div>
-                    <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-muted);">
-                        <input type="checkbox" name="remember"> Remember me
-                    </label>
-                    <button type="submit" class="btn btn-primary btn-block">Sign in</button>
-                </form>
+                    @if($errors->any())
+                        <div class="alert alert-error admin-login-alert">{{ $errors->first() }}</div>
+                    @endif
+
+                    <form method="POST" action="{{ route('login') }}" class="admin-login-form">
+                        @csrf
+                        <div>
+                            <label class="field-label" for="login">Email or username</label>
+                            <input
+                                id="login"
+                                type="text"
+                                name="login"
+                                value="{{ old('login') }}"
+                                required
+                                autofocus
+                                autocomplete="username"
+                                class="input"
+                            >
+                        </div>
+                        <div>
+                            <label class="field-label" for="password">Password</label>
+                            <input id="password" type="password" name="password" required class="input" autocomplete="current-password">
+                        </div>
+                        <label class="admin-login-remember">
+                            <input type="checkbox" name="remember"> Remember me
+                        </label>
+                        <button type="submit" class="btn btn-primary btn-block admin-login-submit">Sign in</button>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
+
+        <p class="admin-login-back">
+            <a href="{{ config('app.frontend_url', 'https://indianopinions.com') }}">← Back to Indian Opinions</a>
+        </p>
+    </main>
 </body>
 </html>

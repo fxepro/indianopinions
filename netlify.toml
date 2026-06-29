@@ -7,7 +7,44 @@
   NODE_VERSION = "20"
   API_URL = "https://indianopinions-indianopinions.up.railway.app"
   NEXT_PUBLIC_API_URL = "https://indianopinions-indianopinions.up.railway.app"
-  NEXT_PUBLIC_ADMIN_URL = "https://indianopinions-indianopinions.up.railway.app/admin/login"
+  NEXT_PUBLIC_ADMIN_URL = "https://indianopinions.com/admin/login"
+
+# Proxy Laravel admin + assets through the public domain (URL stays indianopinions.com)
+[[redirects]]
+  from = "/admin"
+  to = "https://indianopinions-indianopinions.up.railway.app/admin"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/admin/*"
+  to = "https://indianopinions-indianopinions.up.railway.app/admin/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/login"
+  to = "https://indianopinions-indianopinions.up.railway.app/login"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/logout"
+  to = "https://indianopinions-indianopinions.up.railway.app/logout"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/build/*"
+  to = "https://indianopinions-indianopinions.up.railway.app/build/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/storage/*"
+  to = "https://indianopinions-indianopinions.up.railway.app/storage/:splat"
+  status = 200
+  force = true
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"

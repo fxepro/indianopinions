@@ -17,14 +17,9 @@ export function SiteFooter() {
               {link.label}
             </Link>
           ))}
-          <a
-            href={site.adminLoginUrl}
-            className="site-footer-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Staff Login
-          </a>
+          <Link href="/admin/login" className="site-footer-link">
+            Login
+          </Link>
         </nav>
       </div>
     </footer>

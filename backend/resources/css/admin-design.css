@@ -352,3 +352,208 @@ body.admin-shell {
 @media (min-width: 1024px) { .form-grid-2 { grid-template-columns: 2fr 1fr; } }
 .link { color: var(--primary); font-weight: 500; text-decoration: none; }
 .empty { text-align: center; padding: 48px 24px; color: var(--text-muted); }
+
+/* ── Login page (homepage masthead brand) ── */
+body.admin-shell.admin-login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  background: hsl(40, 27%, 95%);
+  color: hsl(0, 5%, 19%);
+}
+
+.admin-login {
+  width: 100%;
+  max-width: 680px;
+}
+
+.admin-login-masthead {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.admin-login-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: hsl(0, 5%, 45%);
+  border-bottom: 1px solid hsl(0, 0%, 82%);
+  padding-bottom: 8px;
+  margin-bottom: 24px;
+}
+
+.admin-login-meta-accent {
+  display: none;
+  color: hsl(0, 100%, 34%);
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 0.2em;
+}
+
+@media (min-width: 768px) {
+  .admin-login-meta-accent {
+    display: block;
+  }
+}
+
+.admin-login-brand-row {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  text-align: left;
+}
+
+@media (min-width: 768px) {
+  .admin-login-brand-row {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 40px;
+  }
+}
+
+.admin-login-brand-link {
+  display: inline-block;
+  text-decoration: none;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.admin-login-brand-link:hover .admin-login-logo {
+  color: hsl(0, 100%, 34%);
+}
+
+.admin-login-logo {
+  font-family: 'Literata', Georgia, 'Times New Roman', serif;
+  font-size: 2.85rem;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: hsl(0, 5%, 19%);
+  margin: 0;
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: baseline;
+  gap: 0.32em;
+  transition: color 0.15s ease;
+}
+
+@media (min-width: 768px) {
+  .admin-login-logo {
+    font-size: 4.5rem;
+  }
+}
+
+.admin-login-logo-word {
+  display: inline-block;
+}
+
+.admin-login-hub-head {
+  font-family: 'Literata', Georgia, 'Times New Roman', serif;
+}
+
+@media (min-width: 768px) {
+  .admin-login-hub-head {
+    max-width: 28rem;
+    margin-left: auto;
+    text-align: right;
+  }
+}
+
+.admin-login-hub-title {
+  font-family: inherit;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.375;
+  letter-spacing: -0.05em;
+  color: hsl(0, 5%, 19%);
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .admin-login-hub-title {
+    font-size: 2.25rem;
+  }
+}
+
+.admin-login-card-wrap {
+  max-width: 420px;
+  margin-inline: auto;
+}
+
+.admin-login-card {
+  border: 1px solid hsl(0, 0%, 82%);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  background: hsl(40, 27%, 95%);
+}
+
+.admin-login-card-body {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-login-title {
+  font-family: 'Literata', Georgia, 'Times New Roman', serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin: 0;
+  color: hsl(0, 5%, 19%);
+}
+
+.admin-login-alert {
+  margin: 0;
+}
+
+.admin-login-form {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-login-remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: hsl(0, 5%, 45%);
+}
+
+.admin-login-page .btn-primary {
+  background: hsl(0, 100%, 34%);
+  border-color: hsl(0, 100%, 34%);
+}
+
+.admin-login-page .btn-primary:hover {
+  background: hsl(0, 100%, 30%);
+  border-color: hsl(0, 100%, 30%);
+}
+
+.admin-login-page .input:focus,
+.admin-login-page .select:focus,
+.admin-login-page .textarea:focus {
+  border-color: hsl(0, 100%, 34%);
+  box-shadow: 0 0 0 3px hsla(0, 100%, 34%, 0.15);
+}
+
+.admin-login-back {
+  text-align: center;
+  margin: 24px 0 0;
+  font-size: 13px;
+}
+
+.admin-login-back a {
+  color: hsl(0, 100%, 34%);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.admin-login-back a:hover {
+  text-decoration: underline;
+}

@@ -6,7 +6,11 @@ cd /app
 echo "==> Indian Opinions boot (/start.sh)"
 
 # Railway sets RAILWAY_PUBLIC_DOMAIN; use it when APP_URL is not configured.
-if [ -n "$RAILWAY_PUBLIC_DOMAIN" ] && [ -z "$APP_URL" ]; then
+# Set APP_URL (or PUBLIC_APP_URL) to https://indianopinions.com when admin is proxied via Netlify.
+if [ -n "$PUBLIC_APP_URL" ]; then
+    export APP_URL="$PUBLIC_APP_URL"
+    echo "==> APP_URL set from PUBLIC_APP_URL: ${APP_URL}"
+elif [ -n "$RAILWAY_PUBLIC_DOMAIN" ] && [ -z "$APP_URL" ]; then
     export APP_URL="https://${RAILWAY_PUBLIC_DOMAIN}"
     echo "==> APP_URL set from Railway: ${APP_URL}"
 fi
