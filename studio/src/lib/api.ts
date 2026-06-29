@@ -52,20 +52,24 @@ export type IntelligenceBrief = {
   next_date: string | null;
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:8000';
+import { getApiUrl } from '@/lib/api-url';
 
 async function fetchJson<T>(path: string): Promise<T | null> {
+  const apiUrl = getApiUrl();
+
   try {
-    const response = await fetch(`${API_URL}${path}`, {
+    const response = await fetch(`${apiUrl}${path}`, {
       next: { revalidate: 60 },
     });
 
     if (!response.ok) {
+      console.error(`API ${path} failed: ${response.status} ${response.statusText} (base: ${apiUrl})`);
       return null;
     }
 
     return response.json() as Promise<T>;
-  } catch {
+  } catch (error) {
+    console.error(`API ${path} error (base: ${apiUrl}):`, error);
     return null;
   }
 }

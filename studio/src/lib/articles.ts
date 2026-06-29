@@ -1,14 +1,15 @@
 import type { ApiArticle } from '@/lib/api';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:8000';
+import { getApiUrl } from '@/lib/api-url';
 
 export async function getArticlesByCategory(
   category: string,
   perPage = 50,
 ): Promise<ApiArticle[]> {
+  const apiUrl = getApiUrl();
+
   try {
     const response = await fetch(
-      `${API_URL}/api/articles?category=${encodeURIComponent(category)}&per_page=${perPage}`,
+      `${apiUrl}/api/articles?category=${encodeURIComponent(category)}&per_page=${perPage}`,
       { next: { revalidate: 60 } },
     );
 

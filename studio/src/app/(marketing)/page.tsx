@@ -9,6 +9,8 @@ import { WeeklyLetter } from '@/components/editorial/WeeklyLetter';
 import { getHomepageLayout } from '@/lib/api';
 import { toArticleCardProps } from '@/lib/article-props';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const layout = await getHomepageLayout();
   const hero = layout?.sections.hero?.items[0];

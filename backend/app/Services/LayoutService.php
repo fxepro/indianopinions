@@ -63,13 +63,13 @@ class LayoutService
                             continue;
                         }
 
-                        $hubSlug = $hubSlugs[$index] ?? null;
+                        $briefHubSlug = $hubSlugs[$index] ?? null;
 
-                        if (! $hubSlug) {
+                        if (! $briefHubSlug) {
                             continue;
                         }
 
-                        $post = $this->leadPostForHub($hubSlug);
+                        $post = $this->leadPostForHub($briefHubSlug);
 
                         if (! $post) {
                             continue;
