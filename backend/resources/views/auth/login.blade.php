@@ -7,8 +7,8 @@
     @vite(['resources/css/app.css'])
 </head>
 <body class="admin-shell admin-login-page">
-    <main class="admin-login">
-        <header class="admin-login-masthead">
+    <header class="admin-login-masthead">
+        <div class="admin-login-masthead-inner">
             <div class="admin-login-meta">
                 <span>Insight • Intelligence • Independent Editorial</span>
                 <span class="admin-login-meta-accent">RECLAIMING THE NARRATIVE</span>
@@ -26,48 +26,52 @@
                     <p class="admin-login-hub-title">Critical Perspectives for the Global Sub-continent</p>
                 </div>
             </div>
-        </header>
+        </div>
+    </header>
 
-        <div class="admin-login-card-wrap">
-            <div class="card admin-login-card">
-                <div class="card-body admin-login-card-body">
-                    <h2 class="admin-login-title">Sign in</h2>
+    <main class="admin-login-main">
+        <div class="admin-login-main-inner">
+            <div class="admin-login-card-wrap">
+                <div class="card admin-login-card">
+                    <div class="card-body admin-login-card-body">
+                        <h2 class="admin-login-title">Sign in</h2>
 
-                    @if($errors->any())
-                        <div class="alert alert-error admin-login-alert">{{ $errors->first() }}</div>
-                    @endif
+                        @if($errors->any())
+                            <div class="alert alert-error admin-login-alert">{{ $errors->first() }}</div>
+                        @endif
 
-                    <form method="POST" action="{{ route('login') }}" class="admin-login-form">
-                        @csrf
-                        <div>
-                            <label class="field-label" for="login">Email or username</label>
-                            <input
-                                id="login"
-                                type="text"
-                                name="login"
-                                value="{{ old('login') }}"
-                                required
-                                autofocus
-                                autocomplete="username"
-                                class="input"
-                            >
-                        </div>
-                        <div>
-                            <label class="field-label" for="password">Password</label>
-                            <input id="password" type="password" name="password" required class="input" autocomplete="current-password">
-                        </div>
-                        <label class="admin-login-remember">
-                            <input type="checkbox" name="remember"> Remember me
-                        </label>
-                        <button type="submit" class="btn btn-primary btn-block admin-login-submit">Sign in</button>
-                    </form>
+                        <form method="POST" action="{{ route('login') }}" class="admin-login-form">
+                            @csrf
+                            <div>
+                                <label class="field-label" for="login">Email or username</label>
+                                <input
+                                    id="login"
+                                    type="text"
+                                    name="login"
+                                    value="{{ old('login') }}"
+                                    required
+                                    autofocus
+                                    autocomplete="username"
+                                    class="input"
+                                >
+                            </div>
+                            <div>
+                                <label class="field-label" for="password">Password</label>
+                                <input id="password" type="password" name="password" required class="input" autocomplete="current-password">
+                            </div>
+                            <label class="admin-login-remember">
+                                <input type="checkbox" name="remember"> Remember me
+                            </label>
+                            <button type="submit" class="btn btn-primary btn-block admin-login-submit">Sign in</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <p class="admin-login-back">
-            <a href="{{ config('app.frontend_url', 'https://indianopinions.com') }}">← Back to Indian Opinions</a>
-        </p>
+            <p class="admin-login-back">
+                <a href="{{ config('app.frontend_url', 'https://indianopinions.com') }}">← Back to Indian Opinions</a>
+            </p>
+        </div>
     </main>
 </body>
 </html>

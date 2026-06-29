@@ -357,21 +357,39 @@ body.admin-shell {
 body.admin-shell.admin-login-page {
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 24px;
+  flex-direction: column;
+  margin: 0;
   background: hsl(40, 27%, 95%);
   color: hsl(0, 5%, 19%);
 }
 
-.admin-login {
+.admin-login-masthead {
   width: 100%;
-  max-width: 680px;
+  flex-shrink: 0;
+  padding: 2.5rem 1rem 1.5rem;
+  border-bottom: 1px solid hsl(0, 0%, 82%);
+  box-sizing: border-box;
 }
 
-.admin-login-masthead {
-  text-align: center;
-  margin-bottom: 40px;
+.admin-login-masthead-inner {
+  width: 100%;
+  max-width: 1350px;
+  margin-inline: auto;
+  text-align: left;
+}
+
+.admin-login-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem 3rem;
+  box-sizing: border-box;
+}
+
+.admin-login-main-inner {
+  width: 100%;
+  max-width: 420px;
 }
 
 .admin-login-meta {
@@ -432,7 +450,7 @@ body.admin-shell.admin-login-page {
 
 .admin-login-logo {
   font-family: 'Literata', Georgia, 'Times New Roman', serif;
-  font-size: 2.85rem;
+  font-size: 1.425rem;
   font-weight: 700;
   letter-spacing: -0.05em;
   line-height: 1;
@@ -448,7 +466,7 @@ body.admin-shell.admin-login-page {
 
 @media (min-width: 768px) {
   .admin-login-logo {
-    font-size: 4.5rem;
+    font-size: 3.04rem;
   }
 }
 
@@ -460,17 +478,9 @@ body.admin-shell.admin-login-page {
   font-family: 'Literata', Georgia, 'Times New Roman', serif;
 }
 
-@media (min-width: 768px) {
-  .admin-login-hub-head {
-    max-width: 28rem;
-    margin-left: auto;
-    text-align: right;
-  }
-}
-
 .admin-login-hub-title {
   font-family: inherit;
-  font-size: 1.5rem;
+  font-size: 0.75rem;
   font-weight: 700;
   line-height: 1.375;
   letter-spacing: -0.05em;
@@ -479,14 +489,19 @@ body.admin-shell.admin-login-page {
 }
 
 @media (min-width: 768px) {
+  .admin-login-hub-head {
+    max-width: 36rem;
+    margin-left: auto;
+    text-align: right;
+  }
+
   .admin-login-hub-title {
-    font-size: 2.25rem;
+    font-size: 1.125rem;
   }
 }
 
 .admin-login-card-wrap {
-  max-width: 420px;
-  margin-inline: auto;
+  width: 100%;
 }
 
 .admin-login-card {
