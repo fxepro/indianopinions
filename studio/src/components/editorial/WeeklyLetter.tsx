@@ -13,13 +13,10 @@ export function WeeklyLetter() {
           <Mail className="h-5 w-5 text-accent" strokeWidth={1.5} />
           <span className="text-sm font-bold uppercase tracking-[0.4em] text-accent">The Weekly Letter</span>
         </div>
-        <h2 className="text-4xl md:text-5xl font-headline font-bold mb-6">
+        <h2 className="text-4xl md:text-5xl font-headline font-bold mb-10">
           Cultivating India’s most insightful civic community.
         </h2>
-        <p className="text-lg opacity-80 mb-10 max-w-2xl mx-auto font-body">
-          Join 85,000+ policy makers, analysts, and leaders receiving our Sunday long-form intelligence briefing. No noise, just perspective.
-        </p>
-        
+
         <form className="flex flex-col md:flex-row gap-4 max-w-lg mx-auto" onSubmit={(e) => e.preventDefault()}>
           <Input 
             type="email" 

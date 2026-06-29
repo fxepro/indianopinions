@@ -6,8 +6,26 @@ export type HubRouteContext = {
   isArchive: boolean;
 };
 
-/** Resolve hub metadata from a marketing pathname (`/hubs/politics`, `/hubs/politics/archive`). */
+const BRIEF_PATH = /^\/brief(?:\/(\d{4}-\d{2}-\d{2}))?\/?$/;
+
+/** Resolve hub metadata from a marketing pathname (`/hubs/politics`, `/brief/2026-06-01`, …). */
 export function hubFromPathname(pathname: string): HubRouteContext | null {
+  const briefMatch = pathname.match(BRIEF_PATH);
+
+  if (briefMatch) {
+    const hub = getHub('intelligence-brief');
+
+    if (!hub) {
+      return null;
+    }
+
+    return {
+      slug: 'intelligence-brief',
+      hub,
+      isArchive: false,
+    };
+  }
+
   const match = pathname.match(/^\/hubs\/([^/]+)(?:\/archive)?\/?$/);
 
   if (!match) {

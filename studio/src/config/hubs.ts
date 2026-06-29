@@ -49,6 +49,11 @@ export const hubs: Record<string, HubMeta> = {
     description:
       'Accessing the historical records and turning points that shaped the modern state.',
   },
+  'intelligence-brief': {
+    title: 'Intelligence Brief',
+    description:
+      'A daily digest of reporting across every editorial desk — two lead assessments and one dispatch per section, in five minutes.',
+  },
 };
 
 export function getHub(slug: string): HubMeta | undefined {

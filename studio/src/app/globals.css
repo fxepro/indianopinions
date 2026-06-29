@@ -393,11 +393,11 @@
   }
 
   .site-footer-inner {
-    @apply flex flex-col md:flex-row justify-between items-center gap-8;
+    @apply flex flex-col md:flex-row justify-between items-center md:items-end gap-10;
   }
 
   .site-footer-brand {
-    @apply text-center md:text-left;
+    @apply text-center md:text-left shrink-0;
   }
 
   .site-footer-logo {
@@ -410,7 +410,11 @@
   }
 
   .site-footer-nav {
-    @apply flex flex-wrap justify-center gap-8 text-[10px] font-bold uppercase tracking-widest;
+    @apply grid grid-cols-2 gap-x-10 md:gap-x-14 text-[10px] font-bold uppercase tracking-widest;
+  }
+
+  .site-footer-nav-col {
+    @apply flex flex-col gap-3 items-start;
   }
 
   .legal-section + .legal-section {
@@ -425,11 +429,26 @@
     @apply text-primary underline underline-offset-2 hover:text-primary/80;
   }
 
+  .legal-index-list {
+    @apply list-none m-0 p-0 divide-y divide-border;
+  }
+
+  .legal-index-item {
+    @apply py-6 first:pt-0;
+  }
+
+  .legal-index-link {
+    @apply font-headline text-lg font-bold text-foreground hover:text-primary transition-colors no-underline;
+  }
+
+  .legal-index-summary {
+    @apply mt-2 text-sm text-muted-foreground leading-relaxed m-0;
+  }
+
   .site-footer-link {
-    @apply hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
-    min-height: 44px;
-    display: inline-flex;
-    align-items: center;
+    @apply hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-left;
+    min-height: auto;
+    display: inline-block;
   }
 
   .cta-band {
