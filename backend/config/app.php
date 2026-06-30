@@ -54,7 +54,7 @@ return [
     |
     */
 
-    'url' => AppUrl::normalize(env('APP_URL'), env('APP_ALLOWED_HOSTS')),
+    'url' => AppUrl::publicUrl(env('APP_URL'), env('APP_ALLOWED_HOSTS')),
 
     /*
     |--------------------------------------------------------------------------

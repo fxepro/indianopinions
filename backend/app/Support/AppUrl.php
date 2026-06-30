@@ -23,6 +23,27 @@ final class AppUrl
     }
 
     /**
+     * Public-facing URL for links, forms, and redirects (skips Railway/internal hosts).
+     */
+    public static function publicUrl(?string $appUrl, ?string $allowedHosts = null): string
+    {
+        foreach (self::parseUrlCandidates($appUrl) as $candidate) {
+            $host = parse_url(self::ensureScheme($candidate), PHP_URL_HOST);
+            if (is_string($host) && self::isPublicHost($host)) {
+                return self::ensureScheme($candidate);
+            }
+        }
+
+        foreach (self::parseAllowedHosts($allowedHosts) as $host) {
+            if (self::isPublicHost($host)) {
+                return 'https://'.$host;
+            }
+        }
+
+        return self::normalize($appUrl, $allowedHosts);
+    }
+
+    /**
      * Comma-separated APP_URL values (full URLs or hostnames).
      *
      * @return list<string>
@@ -137,5 +158,18 @@ final class AppUrl
         }
 
         return (bool) preg_match('/^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?$/', $host);
+    }
+
+    private static function isPublicHost(string $host): bool
+    {
+        if (! self::isValidHostname($host)) {
+            return false;
+        }
+
+        if (in_array($host, ['localhost', '127.0.0.1'], true)) {
+            return false;
+        }
+
+        return ! str_ends_with($host, '.railway.app');
     }
 }
