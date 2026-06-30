@@ -53,7 +53,13 @@ export default function SignInPage() {
       const data = (await res.json()) as {redirect?: string; error?: string};
 
       if (res.ok && data.redirect) {
-        window.location.href = data.redirect;
+        window.location.assign(data.redirect);
+        return;
+      }
+
+      if (res.status === 419) {
+        setError(data.error ?? 'Session expired. Refreshing…');
+        window.location.reload();
         return;
       }
 

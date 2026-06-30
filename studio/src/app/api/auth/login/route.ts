@@ -1,9 +1,16 @@
 import {NextResponse} from 'next/server';
 
-import {forwardSetCookies, toPublicPath} from '@/lib/auth-proxy';
+import {
+  extractCsrfToken,
+  forwardSetCookies,
+  isAuthSuccessRedirect,
+  toPublicRedirectPath,
+} from '@/lib/auth-proxy';
 import {getApiUrl} from '@/lib/api-url';
 
 export const dynamic = 'force-dynamic';
+
+const INVALID_CREDENTIALS = 'The provided credentials do not match our records.';
 
 export async function POST(request: Request) {
   const form = await request.formData();
@@ -27,6 +34,7 @@ export async function POST(request: Request) {
   }
 
   const cookieHeader = request.headers.get('cookie') ?? '';
+  const referer = request.headers.get('referer') ?? undefined;
 
   const response = await fetch(`${getApiUrl()}/admin/login`, {
     method: 'POST',
@@ -34,6 +42,7 @@ export async function POST(request: Request) {
       Accept: 'text/html,application/xhtml+xml',
       'Content-Type': 'application/x-www-form-urlencoded',
       Cookie: cookieHeader,
+      ...(referer ? {Referer: referer} : {}),
     },
     body,
     redirect: 'manual',
@@ -43,17 +52,46 @@ export async function POST(request: Request) {
   const setCookies = response.headers.getSetCookie();
 
   if (response.status === 302 || response.status === 303) {
-    const location = response.headers.get('location') ?? '/admin/posts';
-    const json = NextResponse.json({redirect: toPublicPath(location, request.url)});
+    const location = response.headers.get('location') ?? '';
+    const redirectPath = toPublicRedirectPath(location);
+
+    if (redirectPath && isAuthSuccessRedirect(location)) {
+      const json = NextResponse.json({redirect: redirectPath});
+      forwardSetCookies(json, setCookies);
+
+      return json;
+    }
+
+    const json = NextResponse.json({error: INVALID_CREDENTIALS}, {status: 401});
     forwardSetCookies(json, setCookies);
 
     return json;
   }
 
-  const json = NextResponse.json(
-    {error: 'The provided credentials do not match our records.'},
-    {status: 401},
-  );
+  const contentType = response.headers.get('content-type') ?? '';
+
+  if (contentType.includes('text/html')) {
+    const html = await response.text();
+
+    if (html.includes('Page Expired') || html.includes('419')) {
+      const json = NextResponse.json(
+        {error: 'Session expired. Please refresh the page and try again.'},
+        {status: 419},
+      );
+      forwardSetCookies(json, setCookies);
+
+      return json;
+    }
+
+    if (extractCsrfToken(html)) {
+      const json = NextResponse.json({error: INVALID_CREDENTIALS}, {status: 401});
+      forwardSetCookies(json, setCookies);
+
+      return json;
+    }
+  }
+
+  const json = NextResponse.json({error: INVALID_CREDENTIALS}, {status: 401});
   forwardSetCookies(json, setCookies);
 
   return json;

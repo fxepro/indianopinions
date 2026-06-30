@@ -18,26 +18,55 @@ export function extractCsrfToken(html: string): string | null {
   return match?.[1] ?? null;
 }
 
-export function toPublicPath(location: string, requestUrl: string): string {
-  const origin = new URL(requestUrl).origin;
-  const apiUrl = getApiUrl();
+export function isAuthSuccessRedirect(location: string): boolean {
+  if (location === '') {
+    return false;
+  }
 
-  if (location.startsWith(apiUrl)) {
-    return origin + location.slice(apiUrl.length);
+  let path: string;
+
+  try {
+    path = location.startsWith('http://') || location.startsWith('https://')
+      ? new URL(location).pathname
+      : location.split('?')[0];
+  } catch {
+    return false;
+  }
+
+  if (!path.startsWith('/')) {
+    path = `/${path}`;
+  }
+
+  return (
+    path.startsWith('/admin') &&
+    path !== '/admin/login' &&
+    !path.startsWith('/admin/login/')
+  );
+}
+
+/** Map Laravel redirect target to a same-origin path on the public site. */
+export function toPublicRedirectPath(location: string): string | null {
+  if (!isAuthSuccessRedirect(location)) {
+    return null;
   }
 
   try {
-    const parsed = new URL(location);
-    if (parsed.hostname.includes('railway.app')) {
-      return origin + parsed.pathname + parsed.search;
+    if (location.startsWith('http://') || location.startsWith('https://')) {
+      const parsed = new URL(location);
+      return parsed.pathname + parsed.search;
     }
   } catch {
-    // relative or invalid — fall through
+    return null;
   }
 
-  if (location.startsWith('/')) {
-    return origin + location;
-  }
+  return location.startsWith('/') ? location : `/${location}`;
+}
 
-  return location;
+/** @deprecated Use toPublicRedirectPath */
+export function toPublicPath(location: string, requestUrl: string): string {
+  return toPublicRedirectPath(location) ?? new URL('/admin/posts', requestUrl).pathname;
+}
+
+export function getApiOrigin(): string {
+  return getApiUrl().replace(/\/$/, '');
 }
