@@ -1,5 +1,23 @@
 import {getApiUrl} from '@/lib/api-url';
 
+/**
+ * Auth calls: production uses api.indianopinions.com (shared .indianopinions.com cookies).
+ * Local dev proxies /sanctum and /api/login through Next (same origin on :9002).
+ */
+function getAuthBaseUrl(): string {
+  if (typeof window === 'undefined') {
+    return getApiUrl();
+  }
+
+  const host = window.location.hostname;
+
+  if (host === 'localhost' || host === '127.0.0.1') {
+    return '';
+  }
+
+  return getApiUrl();
+}
+
 let cachedXsrfToken = '';
 
 function readXsrfToken(): string {
@@ -18,15 +36,25 @@ function readXsrfToken(): string {
 }
 
 export async function prepareStaffSignIn(): Promise<void> {
-  const res = await fetch(`${getApiUrl()}/sanctum/csrf-cookie`, {
-    credentials: 'include',
-  });
+  let res: Response;
+
+  try {
+    res = await fetch(`${getAuthBaseUrl()}/sanctum/csrf-cookie`, {
+      credentials: 'include',
+    });
+  } catch {
+    throw new Error('session');
+  }
 
   if (!res.ok) {
     throw new Error('session');
   }
 
   readXsrfToken();
+
+  if (!readXsrfToken()) {
+    throw new Error('session');
+  }
 }
 
 export type StaffSignInPayload = {
@@ -59,7 +87,7 @@ export async function submitStaffSignIn(
 
   let res: Response;
   try {
-    res = await fetch(`${getApiUrl()}/api/login`, {
+    res = await fetch(`${getAuthBaseUrl()}/api/login`, {
       method: 'POST',
       credentials: 'include',
       redirect: 'error',
