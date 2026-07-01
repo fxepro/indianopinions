@@ -67,6 +67,7 @@ Editors curate slots at **Admin → Homepage** and **Admin → Hub Pages**. Empt
 | GET | `/api/layout/hubs/{slug}` | Resolved hub page layout |
 | GET | `/api/categories` | All editorial hubs |
 | GET | `/api/categories/{slug}` | Hub with its articles |
+| POST | `/api/login` | Staff sign-in (Sanctum session; used by `/sign-in`) |
 | POST | `/api/newsletter/subscribe` | `{ "email": "..." }` |
 
 ## Deployment (Railway)
@@ -82,11 +83,21 @@ Editors curate slots at **Admin → Homepage** and **Admin → Hub Pages**. Empt
 
 ```env
 APP_KEY=                    # php artisan key:generate --show
-APP_URL=https://indianopinions.com,https://indianopinions-indianopinions.up.railway.app
+APP_URL=https://admin.indianopinions.com
+ADMIN_URL=https://admin.indianopinions.com/admin
+FRONTEND_URL=https://indianopinions.com
+APP_ALLOWED_HOSTS=admin.indianopinions.com,api.indianopinions.com,indianopinions.com,www.indianopinions.com
+SESSION_DOMAIN=.indianopinions.com
+SESSION_SECURE_COOKIE=true
+SANCTUM_STATEFUL_DOMAINS=indianopinions.com,www.indianopinions.com,admin.indianopinions.com,api.indianopinions.com
+CORS_ALLOWED_ORIGINS=https://indianopinions.com,https://www.indianopinions.com,https://admin.indianopinions.com,https://api.indianopinions.com
+CACHE_STORE=database
+SESSION_DRIVER=database
 ```
 
-`FRONTEND_URL` is optional — defaults to the first URL in `APP_URL` (CORS + “back to site” links).  
-`APP_ALLOWED_HOSTS` is optional — extra hostnames if needed.
+Custom domains on Railway: `api.indianopinions.com` and `admin.indianopinions.com` (port **8080**). DNS CNAMEs live in Netlify DNS.
+
+`FRONTEND_URL` drives “back to site” and unauthenticated admin redirects to `/sign-in`.
 
 5. Link Postgres — Railway injects `DATABASE_URL`.
 
@@ -111,13 +122,19 @@ See also: [`docs/RAILWAY-LARAVEL-DEPLOY.md`](../docs/RAILWAY-LARAVEL-DEPLOY.md) 
 
 ## Next.js integration
 
-In Netlify, set:
+Production (Netlify):
 
+```env
+API_URL=https://api.indianopinions.com
+NEXT_PUBLIC_API_URL=https://api.indianopinions.com
+NEXT_PUBLIC_ADMIN_URL=https://admin.indianopinions.com/admin
 ```
-API_URL=https://your-backend.up.railway.app
-```
+
+Staff sign-in: `https://indianopinions.com/sign-in` → `https://admin.indianopinions.com/admin`
 
 Fetch layout from `${API_URL}/api/layout/homepage` and hub pages from `/api/layout/hubs/{slug}`.
+
+See [`docs/STAFF.md`](../docs/STAFF.md) for staff URLs.
 
 ## Editorial categories (seeded)
 

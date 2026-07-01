@@ -1,0 +1,73 @@
+# Deployment Steps — Indian Opinions
+
+**Status: complete** (smoke-tested 2026-07-01)
+
+## Live URLs
+
+| Host | Serves |
+|------|--------|
+| `indianopinions.com` | Next.js marketing + `/sign-in` |
+| `api.indianopinions.com` | Laravel API + Sanctum auth |
+| `admin.indianopinions.com` | Laravel admin (Blade) |
+
+Staff doc: [`docs/STAFF.md`](STAFF.md)
+
+---
+
+## Production smoke test (passed)
+
+| Check | Result |
+|-------|--------|
+| `https://indianopinions.com/` | 200 |
+| `https://indianopinions.com/sign-in` | 200 |
+| `https://api.indianopinions.com/up` | 200 |
+| `https://api.indianopinions.com/api/layout/homepage` | 200 |
+| `https://api.indianopinions.com/sanctum/csrf-cookie` | 204 |
+| `POST /api/login` (CORS preflight) | 204 |
+| `POST /api/login` (editor credentials) | 200 → `admin.indianopinions.com/admin` |
+| `https://admin.indianopinions.com/admin` (guest) | 302 → `indianopinions.com/sign-in` |
+
+---
+
+## Phase 0 — Prerequisites ✅
+
+- DNS CNAMEs `admin` + `api` in Netlify DNS → Railway
+- Railway custom domains on Laravel service (port **8080**)
+
+---
+
+## Phase 1 — Backend auth API ✅
+
+Sanctum, `POST /api/login`, CORS, `SESSION_DOMAIN=.indianopinions.com` on Railway.
+
+---
+
+## Phase 2 — Next.js sign-in ✅
+
+`/sign-in` calls `api.indianopinions.com` directly with `credentials: 'include'`.
+
+---
+
+## Phase 3 — DNS + Railway ✅
+
+Railway env documented in `docs/.env-railway.txt`.
+
+---
+
+## Phase 4 — Netlify ✅
+
+No Laravel proxy on public site. `netlify.toml` uses subdomain API/admin URLs.
+
+---
+
+## Phase 5 — Cleanup ✅
+
+- Removed `studio/src/app/api/auth/*`, `auth-proxy.ts`, Netlify/Next Laravel proxies
+- Footer Login → `/sign-in`
+- Staff URLs → `docs/STAFF.md`
+
+---
+
+## Next: product features
+
+See [`docs/Features`](Features).
