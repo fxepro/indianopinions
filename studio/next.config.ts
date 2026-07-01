@@ -1,10 +1,5 @@
 import type {NextConfig} from 'next';
 
-const backendUrl =
-  process.env.API_URL ??
-  process.env.NEXT_PUBLIC_API_URL ??
-  'http://localhost:8000';
-
 const nextConfig: NextConfig = {
   async redirects() {
     return [
@@ -13,16 +8,6 @@ const nextConfig: NextConfig = {
         destination: '/sign-in',
         permanent: false,
       },
-    ];
-  },
-  async rewrites() {
-    return [
-      {source: '/sanctum/:path*', destination: `${backendUrl}/sanctum/:path*`},
-      {source: '/api/login', destination: `${backendUrl}/api/login`},
-      {source: '/admin', destination: `${backendUrl}/admin`},
-      {source: '/admin/:path*', destination: `${backendUrl}/admin/:path*`},
-      {source: '/build/:path*', destination: `${backendUrl}/build/:path*`},
-      {source: '/storage/:path*', destination: `${backendUrl}/storage/:path*`},
     ];
   },
   typescript: {

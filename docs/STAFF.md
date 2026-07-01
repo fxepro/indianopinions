@@ -20,6 +20,8 @@ The marketing site and sign-in page live on **https://indianopinions.com**.
 
 ## Local development
 
+See **[LOCAL-DEV.md](./LOCAL-DEV.md)** — same sign-in code as production; only env vars differ.
+
 | Service | URL |
 |---------|-----|
 | Next.js (public + sign-in) | http://localhost:9002 |

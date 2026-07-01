@@ -24,9 +24,13 @@ export default function SignInPage() {
           setSessionReady(true);
         }
       })
-      .catch(() => {
+      .catch((err) => {
         if (!cancelled) {
-          setError('Could not start a sign-in session. Please refresh and try again.');
+          setError(
+            err instanceof StaffSignInError
+              ? err.message
+              : 'Could not start a sign-in session. Please refresh and try again.',
+          );
         }
       });
 

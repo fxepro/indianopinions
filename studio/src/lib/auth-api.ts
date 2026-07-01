@@ -1,23 +1,5 @@
 import {getApiUrl} from '@/lib/api-url';
 
-/**
- * Auth calls: production uses api.indianopinions.com (shared .indianopinions.com cookies).
- * Local dev proxies /sanctum and /api/login through Next (same origin on :9002).
- */
-function getAuthBaseUrl(): string {
-  if (typeof window === 'undefined') {
-    return getApiUrl();
-  }
-
-  const host = window.location.hostname;
-
-  if (host === 'localhost' || host === '127.0.0.1') {
-    return '';
-  }
-
-  return getApiUrl();
-}
-
 let cachedXsrfToken = '';
 
 function readXsrfToken(): string {
@@ -39,21 +21,27 @@ export async function prepareStaffSignIn(): Promise<void> {
   let res: Response;
 
   try {
-    res = await fetch(`${getAuthBaseUrl()}/sanctum/csrf-cookie`, {
+    res = await fetch(`${getApiUrl()}/sanctum/csrf-cookie`, {
       credentials: 'include',
     });
   } catch {
-    throw new Error('session');
+    throw new StaffSignInError(
+      'Cannot reach the API. Start the Laravel backend (`php artisan serve` in backend/).',
+      'unknown',
+    );
   }
 
   if (!res.ok) {
-    throw new Error('session');
+    throw new StaffSignInError('Could not start a sign-in session. Please refresh and try again.', 'unknown');
   }
 
   readXsrfToken();
 
   if (!readXsrfToken()) {
-    throw new Error('session');
+    throw new StaffSignInError(
+      'CSRF cookie missing. Check backend SESSION_DOMAIN=localhost in backend/.env.',
+      'unknown',
+    );
   }
 }
 
@@ -87,7 +75,7 @@ export async function submitStaffSignIn(
 
   let res: Response;
   try {
-    res = await fetch(`${getAuthBaseUrl()}/api/login`, {
+    res = await fetch(`${getApiUrl()}/api/login`, {
       method: 'POST',
       credentials: 'include',
       redirect: 'error',

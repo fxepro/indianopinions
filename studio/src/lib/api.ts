@@ -58,6 +58,8 @@ export type ApiMediaVideo = {
   description: string | null;
   video_url: string;
   thumbnail_url: string | null;
+  embed_url: string | null;
+  provider: 'youtube' | 'vimeo' | 'file';
   duration_seconds: number | null;
   category: string | null;
   featured: boolean;

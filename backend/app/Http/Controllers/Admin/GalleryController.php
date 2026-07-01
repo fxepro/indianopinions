@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\GalleryImage;
+use App\Support\MediaLibraryStats;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -14,7 +15,9 @@ class GalleryController extends Controller
     {
         $images     = GalleryImage::orderBy('sort_order')->orderByDesc('created_at')->paginate(40);
         $categories = GalleryImage::whereNotNull('category')->distinct()->orderBy('category')->pluck('category');
-        return view('admin.gallery.index', compact('images', 'categories'));
+        $stats      = MediaLibraryStats::gallery();
+
+        return view('admin.gallery.index', compact('images', 'categories', 'stats'));
     }
 
     /**
@@ -55,7 +58,8 @@ class GalleryController extends Controller
     public function create()
     {
         $categories = GalleryImage::whereNotNull('category')->distinct()->orderBy('category')->pluck('category');
-        return view('admin.gallery.form', compact('categories'));
+
+        return view('admin.gallery.form', ['gallery' => null, 'categories' => $categories]);
     }
 
     public function store(Request $request)

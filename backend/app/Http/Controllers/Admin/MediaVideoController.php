@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\MediaVideo;
+use App\Support\MediaLibraryStats;
 use App\Support\MediaStorage;
+use App\Support\VideoUrl;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class MediaVideoController extends Controller
 {
@@ -18,8 +21,9 @@ class MediaVideoController extends Controller
             ->paginate(24);
 
         $categories = MediaVideo::whereNotNull('category')->distinct()->orderBy('category')->pluck('category');
+        $stats = MediaLibraryStats::videos();
 
-        return view('admin.media-videos.index', compact('videos', 'categories'));
+        return view('admin.media-videos.index', compact('videos', 'categories', 'stats'));
     }
 
     public function upload(Request $request)
@@ -54,7 +58,7 @@ class MediaVideoController extends Controller
     {
         $categories = MediaVideo::whereNotNull('category')->distinct()->orderBy('category')->pluck('category');
 
-        return view('admin.media-videos.form', compact('categories'));
+        return view('admin.media-videos.form', ['video' => null, 'categories' => $categories]);
     }
 
     public function store(Request $request)
@@ -89,7 +93,7 @@ class MediaVideoController extends Controller
 
     private function validated(Request $request, ?MediaVideo $video = null): array
     {
-        return $request->validate([
+        $data = $request->validate([
             'video_url' => 'required|string|max:1000',
             'thumbnail_url' => 'nullable|string|max:1000',
             'title' => 'nullable|string|max:255',
@@ -100,5 +104,19 @@ class MediaVideoController extends Controller
             'featured' => 'boolean',
             'is_published' => 'boolean',
         ]);
+
+        $data['video_url'] = VideoUrl::normalize($data['video_url']);
+
+        if (! VideoUrl::isSupported($data['video_url'])) {
+            throw ValidationException::withMessages([
+                'video_url' => 'Enter a direct MP4/WebM/MOV URL or a YouTube/Vimeo link.',
+            ]);
+        }
+
+        if (empty($data['thumbnail_url'])) {
+            $data['thumbnail_url'] = VideoUrl::thumbnailUrl($data['video_url']);
+        }
+
+        return $data;
     }
 }

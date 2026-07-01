@@ -2,7 +2,9 @@
 @section('page_title', 'Gallery')
 
 @section('content')
-<x-admin.page-header title="Gallery" subtitle="Upload and manage images for articles">
+<x-admin.page-header title="Gallery" subtitle="Upload and manage images for articles" />
+
+@include('partials.admin.media-stats')
 
 {{-- ── Drag-and-drop upload zone ──────────────────────────────────────── --}}
 <div class="mb-8"
@@ -13,16 +15,16 @@
      @drop.prevent="onDrop($event)">
 
     {{-- Drop zone --}}
-    <div :class="dragging ? 'border-indigo-500 bg-indigo-50' : 'border-zinc-300 bg-white hover:border-indigo-400 hover:bg-zinc-50'"
-         class="border-2 border-dashed rounded-xl p-10 text-center transition-all duration-150 cursor-pointer"
+    <div class="media-dropzone"
+         :class="{ 'is-dragging': dragging }"
          @click="$refs.fileInput.click()">
 
-        <svg class="w-10 h-10 mx-auto mb-3 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg class="media-dropzone-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                   d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
         </svg>
-        <p class="text-sm font-semibold text-zinc-600">Drop images here, or <span class="text-indigo-600">browse</span></p>
-        <p class="text-xs text-zinc-400 mt-1">JPG, PNG, GIF, WebP · up to 20 MB each · multiple files at once</p>
+        <p class="media-dropzone-title">Drop images here, or <span class="media-dropzone-accent">browse</span></p>
+        <p class="media-dropzone-hint">JPG, PNG, GIF, WebP · up to 20 MB each · multiple files at once</p>
 
         <input type="file" x-ref="fileInput" multiple accept="image/*"
                class="hidden" @change="onFileInput($event)">
@@ -194,7 +196,7 @@ function galleryUploader() {
                                 ?? '{{ csrf_token() }}');
 
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', '{{ admin_route('admin.gallery.upload') }}');
+            xhr.open('POST', @json(admin_route('admin.gallery.upload')));
 
             xhr.upload.onprogress = e => {
                 if (e.lengthComputable) item.progress = Math.round(e.loaded / e.total * 95);
